@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Officer;
+use App\Models\OfficerCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class OfficerController extends Controller
@@ -12,7 +15,10 @@ class OfficerController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Admin/Officers/index',[]);
+        $officers = Officer::with('category')->latest()->get();
+        return Inertia::render('Admin/Officers/index', [
+            'officers' => $officers
+        ]);
     }
 
     /**
@@ -20,9 +26,10 @@ class OfficerController extends Controller
      */
     public function create()
     {
-    
-
-        return Inertia::render('Admin/Officers/create');
+        $categories = OfficerCategory::all();
+        return Inertia::render('Admin/Officers/create', [
+            'categories' => $categories
+        ]);
 
     }
 
@@ -31,7 +38,22 @@ class OfficerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'officer_category_id' => 'nullable|exists:officer_categories,id',
+            'name' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'birthday' => 'required|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('officers', 'public');
+        }
+
+        Officer::create($validated);
+
+        return redirect()->route('Admin.Officers.index')
+            ->with('success', 'Officer created successfully.');
     }
 
     /**
@@ -47,7 +69,12 @@ class OfficerController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $officer = Officer::findOrFail($id);
+        $categories = OfficerCategory::all();
+        return Inertia::render('Admin/Officers/edit', [
+            'officer' => $officer,
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -55,7 +82,28 @@ class OfficerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $officer = Officer::findOrFail($id);
+
+        $validated = $request->validate([
+            'officer_category_id' => 'nullable|exists:officer_categories,id',
+            'name' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'birthday' => 'required|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($officer->image) {
+                Storage::disk('public')->delete($officer->image);
+            }
+            $validated['image'] = $request->file('image')->store('officers', 'public');
+        }
+
+        $officer->update($validated);
+
+        return redirect()->route('Admin.Officers.index')
+            ->with('success', 'Officer updated successfully.');
     }
 
     /**
@@ -63,6 +111,16 @@ class OfficerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $officer = Officer::findOrFail($id);
+        
+        // Delete image if exists
+        if ($officer->image) {
+            Storage::disk('public')->delete($officer->image);
+        }
+        
+        $officer->delete();
+
+        return redirect()->route('Admin.Officers.index')
+            ->with('success', 'Officer deleted successfully.');
     }
 }

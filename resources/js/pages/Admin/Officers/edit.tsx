@@ -7,12 +7,22 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
+interface Officer {
+    id: number;
+    officer_category_id: number | null;
+    name: string;
+    position: string;
+    birthday: string;
+    image: string | null;
+}
+
 interface OfficerCategory {
     id: number;
     name: string;
 }
 
 interface Props {
+    officer: Officer;
     categories: OfficerCategory[];
 }
 
@@ -22,35 +32,45 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/Officers',
     },
     {
-        title: 'Create New Officer',
-        href: '/Officers/create',
+        title: 'Edit Officer',
+        href: '#',
     },
 ];
 
-export default function Index({ categories }: Props) {
+export default function Edit({ officer, categories }: Props) {
     const { data, setData, post, processing, errors } = useForm({
-        officer_category_id: 'none',
-        name: '',
-        position: '',
-        birthday: '',
+        officer_category_id: officer.officer_category_id?.toString() || 'none',
+        name: officer.name,
+        position: officer.position,
+        birthday: officer.birthday,
         image: null as File | null,
+        _method: 'PUT',
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post('/Officers', {
+        post(`/Officers/${officer.id}`, {
             forceFormData: true,
         });
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create New Officer" />
+            <Head title="Edit Officer" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
                     <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-                        <h2 className="mb-6 text-2xl font-bold">Create New Officer</h2>
+                        <h2 className="mb-6 text-2xl font-bold">Edit Officer</h2>
                         <form onSubmit={submit} className="space-y-4">
+                            {officer.image && (
+                                <div className="mb-4">
+                                    <Label>Current Image</Label>
+                                    <div className="mt-2">
+                                        <img src={`/storage/${officer.image}`} alt={officer.name} className="h-32 w-32 rounded-full object-cover" />
+                                    </div>
+                                </div>
+                            )}
+
                             <div>
                                 <Label htmlFor="officer_category_id">Category</Label>
                                 <Select value={data.officer_category_id} onValueChange={(value) => setData('officer_category_id', value)}>
@@ -112,7 +132,7 @@ export default function Index({ categories }: Props) {
                             </div>
 
                             <div>
-                                <Label htmlFor="image">Image</Label>
+                                <Label htmlFor="image">Image (optional - leave empty to keep current)</Label>
                                 <Input
                                     id="image"
                                     name="image"
@@ -129,7 +149,7 @@ export default function Index({ categories }: Props) {
                                     Cancel
                                 </Button>
                                 <Button type="submit" disabled={processing}>
-                                    {processing ? 'Creating...' : 'Create Officer'}
+                                    {processing ? 'Updating...' : 'Update Officer'}
                                 </Button>
                             </div>
                         </form>
