@@ -13,6 +13,7 @@ interface Officer {
     name: string;
     position: string;
     birthday: string;
+    yearservice: string;
     image: string | null;
 }
 
@@ -43,6 +44,7 @@ export default function Edit({ officer, categories }: Props) {
         name: officer.name,
         position: officer.position,
         birthday: officer.birthday,
+        yearservice: officer.yearservice,
         image: null as File | null,
         _method: 'PUT',
     });
@@ -129,6 +131,19 @@ export default function Edit({ officer, categories }: Props) {
                                     className="mt-1"
                                 />
                                 {errors.birthday && <p className="mt-1 text-sm text-red-600">{errors.birthday}</p>}
+                            </div>
+                            <div>
+                                <Label htmlFor="yearservice">Year Service</Label>
+                                <Input
+                                    id="yearservice"
+                                    placeholder="Enter officer year of service"
+                                    name="yearservice"
+                                    type="date"
+                                    value={data.yearservice}
+                                    onChange={(e) => setData('yearservice', e.target.value)}
+                                    className="mt-1"
+                                />
+                                {errors.yearservice && <p className="mt-1 text-sm text-red-600">{errors.yearservice}</p>}
                             </div>
 
                             <div>

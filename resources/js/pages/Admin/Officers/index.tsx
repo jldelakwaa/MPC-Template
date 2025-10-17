@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { FolderKanban, Pencil, Plus, Trash2 } from 'lucide-react';
 
 interface Officer {
     id: number;
@@ -46,10 +46,15 @@ export default function Index({ officers }: Props) {
             <div className="m-4">
                 <div className="mb-4 flex justify-end gap-2">
                     <Link href="/OfficerCategories">
-                        <Button variant="outline">Manage Categories</Button>
+                        <Button variant="outline">
+                            <FolderKanban /> Manage Categories
+                        </Button>
                     </Link>
                     <Link href="/Officers/create">
-                        <Button>Create Officer</Button>
+                        <Button>
+                            <Plus />
+                            Create Officer
+                        </Button>
                     </Link>
                 </div>
                 <div className="rounded-md border">

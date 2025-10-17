@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { ArrowBigLeftDash, Pencil, Plus, Trash2 } from 'lucide-react';
 
 interface OfficerCategory {
     id: number;
@@ -40,7 +40,16 @@ export default function Index({ categories }: Props) {
             <div className="m-4">
                 <div className="mb-4 flex justify-end">
                     <Link href="/OfficerCategories/create">
-                        <Button>Create Category</Button>
+                        <Button>
+                            <Plus />
+                            Create Category
+                        </Button>
+                    </Link>
+                    <Link href="/Officers">
+                        <Button variant="outline">
+                            <ArrowBigLeftDash />
+                            Back to Officers
+                        </Button>
                     </Link>
                 </div>
                 <div className="rounded-md border">

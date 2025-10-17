@@ -20,6 +20,7 @@ class Officer extends Model
         'name',
         'position',
         'birthday',
+        'yearservice',
         'image',
     ];
 
@@ -30,6 +31,7 @@ class Officer extends Model
      */
     protected $casts = [
         'birthday' => 'date',
+        'yearservice' => 'date',
     ];
 
     /**
