@@ -1,4 +1,13 @@
 import { Button } from '@/components/ui/button';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -20,8 +29,23 @@ interface Officer {
     updated_at: string;
 }
 
+interface PaginatorLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedOfficers {
+    data: Officer[];
+    links: PaginatorLink[];
+    next_page_url: string | null;
+    prev_page_url: string | null;
+    current_page: number;
+    last_page: number;
+}
+
 interface Props {
-    officers: Officer[];
+    officers: PaginatedOfficers;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -70,14 +94,14 @@ export default function Index({ officers }: Props) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {officers.length === 0 ? (
+                            {officers.data.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={6} className="text-center">
                                         No officers found.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                officers.map((officer) => (
+                                officers.data.map((officer) => (
                                     <TableRow key={officer.id}>
                                         <TableCell>
                                             {officer.image ? (
@@ -122,6 +146,52 @@ export default function Index({ officers }: Props) {
                         </TableBody>
                     </Table>
                 </div>
+                <Pagination className="mt-4">
+                    <PaginationContent>
+                        {officers.links.map((link, index) => {
+                            if (link.url === null) {
+                                // Handle disabled links (like '...' or prev/next on first/last page)
+                                return (
+                                    <PaginationItem key={index}>
+                                        {link.label.includes('Previous') ? (
+                                            <PaginationPrevious className="cursor-not-allowed opacity-50" />
+                                        ) : link.label.includes('Next') ? (
+                                            <PaginationNext className="cursor-not-allowed opacity-50" />
+                                        ) : (
+                                            <PaginationEllipsis />
+                                        )}
+                                    </PaginationItem>
+                                );
+                            }
+
+                            if (link.label.includes('Previous')) {
+                                return (
+                                    <PaginationItem key={index}>
+                                        <PaginationPrevious href={link.url} />
+                                    </PaginationItem>
+                                );
+                            }
+
+                            if (link.label.includes('Next')) {
+                                return (
+                                    <PaginationItem key={index}>
+                                        <PaginationNext href={link.url} />
+                                    </PaginationItem>
+                                );
+                            }
+
+                            return (
+                                <PaginationItem key={index}>
+                                    {!isNaN(Number(link.label)) && (
+                                        <PaginationLink href={link.url} isActive={link.active}>
+                                            {link.label}
+                                        </PaginationLink>
+                                    )}
+                                </PaginationItem>
+                            );
+                        })}
+                    </PaginationContent>
+                </Pagination>
             </div>
         </AppLayout>
     );

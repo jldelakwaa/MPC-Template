@@ -15,7 +15,7 @@ class OfficerController extends Controller
      */
     public function index()
     {
-        $officers = Officer::with('category')->latest()->get();
+        $officers = Officer::with('category')->latest()->paginate(5);
         return Inertia::render('Admin/Officers/index', [
             'officers' => $officers
         ]);
@@ -30,7 +30,6 @@ class OfficerController extends Controller
         return Inertia::render('Admin/Officers/create', [
             'categories' => $categories
         ]);
-
     }
 
     /**
@@ -124,10 +123,10 @@ class OfficerController extends Controller
 
         return redirect()->route('Admin.Officers.index')
             ->with('swal', [
-            'title' => 'Deleted!',
-            'text' => 'Officer deleted successfully.',
-            'icon' => 'success',
-            'timer' => 3000,
+                'title' => 'Deleted!',
+                'text' => 'Officer deleted successfully.',
+                'icon' => 'success',
+                'timer' => 3000,
             ]);
     }
 }

@@ -13,14 +13,23 @@ interface Faq {
     category?: {
         id: number;
         title: string;
-        description: string;
     } | null;
     created_at: string;
     updated_at: string;
 }
 
+interface PaginatedFaqs {
+    data: Faq[];
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+    // You can add other paginator properties here if needed
+}
+
 interface Props {
-    faqs: Faq[];
+    faqs: PaginatedFaqs;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -67,14 +76,14 @@ export default function Index({ faqs }: Props) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {faqs.length === 0 ? (
+                            {faqs.data.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={3} className="text-center">
                                         No Faq found.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                faqs.map((faq) => (
+                                faqs.data.map((faq) => (
                                     <TableRow key={faq.id}>
                                         <TableCell>
                                             {faq.category ? (

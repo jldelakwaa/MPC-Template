@@ -15,7 +15,7 @@ class FaqsController extends Controller
      */
     public function index()
     {
-        $faqs = FaQC::with('faqCategory')->latest()->get();
+        $faqs = FaQC::with('faqCategory')->latest()->paginate(5);
         return Inertia::render('Admin/Faq/index', [
             'faqs' => $faqs
         ]);

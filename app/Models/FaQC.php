@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FaQC extends Model
@@ -23,6 +22,6 @@ class FaQC extends Model
  ];
  public function faqCategory(): BelongsTo
     {
-        return $this->belongsTo(FaqCategory::class, 'faqs_categoryid');
+        return $this->belongsTo(FaQCategory::class, 'faqs_categoryid');
     }
 }
