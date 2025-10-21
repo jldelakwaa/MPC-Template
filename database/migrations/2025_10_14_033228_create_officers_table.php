@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('position');
             $table->date('birthday');
+            $table->date('yearservice');
             $table->string('image')->nullable();
             $table->timestamps();
         });

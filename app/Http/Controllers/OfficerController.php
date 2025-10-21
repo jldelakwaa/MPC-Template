@@ -43,6 +43,7 @@ class OfficerController extends Controller
             'name' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'birthday' => 'required|date',
+            'yearservice' => 'required|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -89,6 +90,7 @@ class OfficerController extends Controller
             'name' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'birthday' => 'required|date',
+            'yearservice' => 'required|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -112,15 +114,20 @@ class OfficerController extends Controller
     public function destroy(string $id)
     {
         $officer = Officer::findOrFail($id);
-        
+
         // Delete image if exists
         if ($officer->image) {
             Storage::disk('public')->delete($officer->image);
         }
-        
+
         $officer->delete();
 
         return redirect()->route('Admin.Officers.index')
-            ->with('success', 'Officer deleted successfully.');
+            ->with('swal', [
+            'title' => 'Deleted!',
+            'text' => 'Officer deleted successfully.',
+            'icon' => 'success',
+            'timer' => 3000,
+            ]);
     }
 }
