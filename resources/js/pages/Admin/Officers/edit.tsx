@@ -66,8 +66,8 @@ export default function Edit({ officer, categories }: Props) {
                         <form onSubmit={submit} className="space-y-4">
                             {officer.image && (
                                 <div className="mb-4">
-                                    <Label>Current Image</Label>
-                                    <div className="mt-2">
+                                    <Label className="flex justify-self-center">Current Image</Label>
+                                    <div className="mt-2 flex justify-center">
                                         <img src={`/storage/${officer.image}`} alt={officer.name} className="h-32 w-32 rounded-full object-cover" />
                                     </div>
                                 </div>

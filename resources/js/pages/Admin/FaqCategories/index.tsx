@@ -5,35 +5,29 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { FolderKanban, Pencil, Plus, Trash2 } from 'lucide-react';
 
-interface Faq {
+interface FaqCategories {
     id: number;
-    category_id: number;
-    question: string;
-    answer: string;
-    category?: {
-        id: number;
-        title: string;
-        description: string;
-    } | null;
+    title: string;
+    description: string;
     created_at: string;
     updated_at: string;
 }
 
 interface Props {
-    faqs: Faq[];
+    categories: FaqCategories[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Faq',
-        href: '/Faq',
+        title: 'FaqCategories',
+        href: '/FaqCategories',
     },
 ];
 
-export default function Index({ faqs }: Props) {
+export default function Index({ categories = [] }: Props) {
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this faq?')) {
-            router.delete(`/Faq/${id}`, {
+        if (confirm('Are you sure you want to delete this category? This will remove the category from all FAQs.')) {
+            router.delete(`/FaqCategories/${id}`, {
                 preserveScroll: true,
             });
         }
@@ -41,18 +35,18 @@ export default function Index({ faqs }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Faq" />
+            <Head title="FaqCategories" />
             <div className="m-4">
                 <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/FaqCategories">
-                        <Button variant="outline">
-                            <FolderKanban /> Manage Categories
+                    <Link href="/Faq">
+                        <Button variant="outline" className="mr-2">
+                            <FolderKanban className="mr-2" /> Manage FaQ
                         </Button>
                     </Link>
-                    <Link href="/Faq/create">
+                    <Link href="/FaqCategories/create">
                         <Button>
                             <Plus />
-                            Create FaQ
+                            Create Category
                         </Button>
                     </Link>
                 </div>
@@ -60,41 +54,32 @@ export default function Index({ faqs }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Category</TableHead>
-                                <TableHead>Question</TableHead>
-                                <TableHead>Answer</TableHead>
+                                <TableHead>Title</TableHead>
+                                <TableHead>Description</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {faqs.length === 0 ? (
+                            {categories.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="text-center">
-                                        No Faq found.
+                                    <TableCell colSpan={6} className="text-center">
+                                        No FAQ categories found.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                faqs.map((faq) => (
-                                    <TableRow key={faq.id}>
-                                        <TableCell>
-                                            {faq.category ? (
-                                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                                                    {faq.category.title}
-                                                </span>
-                                            ) : (
-                                                <span className="text-muted-foreground italic">No category</span>
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="font-medium">{faq.question}</TableCell>
-                                        <TableCell>{faq.answer}</TableCell>
+                                categories.map((category) => (
+                                    <TableRow key={category.id}>
+                                        <TableCell className="font-medium">{category.title}</TableCell>
+                                        <TableCell>{category.description}</TableCell>
+
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
-                                                <Link href={`/Faq/${faq.id}/edit`}>
+                                                <Link href={`/FaqCategories/${category.id}/edit`}>
                                                     <Button variant="outline" size="sm">
                                                         <Pencil className="h-4 w-4" />
                                                     </Button>
                                                 </Link>
-                                                <Button variant="destructive" size="sm" onClick={() => handleDelete(faq.id)}>
+                                                <Button variant="destructive" size="sm" onClick={() => handleDelete(category.id)}>
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
