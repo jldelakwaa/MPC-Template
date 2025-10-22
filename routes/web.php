@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/Officers', [OfficerController::class, 'store'])->name('Admin.Officers.store');
     Route::get('/Officers/{id}/edit', [OfficerController::class, 'edit'])->name('Admin.Officers.edit');
     Route::put('/Officers/{id}', [OfficerController::class, 'update'])->name('Admin.Officers.update');
+    Route::delete('/Officers/bulk-delete', [OfficerController::class, 'bulkDestroy'])->name('officers.bulkDestroy');
     Route::delete('/Officers/{id}', [OfficerController::class, 'destroy'])->name('Admin.Officers.destroy');
 
       // Faq

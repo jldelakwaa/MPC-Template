@@ -199,6 +199,26 @@ export default function OfficersIndex({ officers }: Props) {
                         }}
                         className="max-w-sm"
                     />
+                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                        <Button
+                            variant="destructive"
+                            className="ml-2"
+                            onClick={() => {
+                                if (confirm('Are you sure you want to delete selected officers?')) {
+                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as Officer).id);
+                                    router.delete('/Officers/bulk-delete', {
+                                        data: { ids: selectedIds },
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            table.toggleAllPageRowsSelected(false);
+                                        },
+                                    });
+                                }
+                            }}
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete Selected ({table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                    )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">

@@ -129,4 +129,24 @@ class OfficerController extends Controller
                 'timer' => 3000,
             ]);
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:officers,id',
+        ]);
+
+        $officers = Officer::whereIn('id', $request->input('ids'))->get();
+
+        foreach ($officers as $officer) {
+            if ($officer->image) {
+                Storage::disk('public')->delete($officer->image);
+            }
+            $officer->delete();
+        }
+
+         return redirect()->back()->with('success', 'Selected officers have been deleted.');
+
+    }
 }
