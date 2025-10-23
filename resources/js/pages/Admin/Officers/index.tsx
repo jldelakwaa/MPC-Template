@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -62,6 +62,9 @@ interface PaginatedOfficers {
 
 interface Props {
     officers: PaginatedOfficers;
+    filters: {
+        search?: string;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -130,6 +133,7 @@ const columns: ColumnDef<Officer>[] = [
     },
     {
         id: 'actions',
+        header: 'Actions',
         cell: ({ row }) => {
             const officer = row.original;
             return (
@@ -166,7 +170,7 @@ const columns: ColumnDef<Officer>[] = [
 ];
 
 // 🧮 Main Page Component
-export default function OfficersIndex({ officers }: Props) {
+export default function OfficersIndex({ officers, filters }: Props) {
     const table = useReactTable({
         data: officers.data,
         columns,
@@ -191,14 +195,20 @@ export default function OfficersIndex({ officers }: Props) {
                 </div>
 
                 <div className="flex items-center py-4">
+                    <div className="relative max-w-sm w-full">
                     <Input
-                        placeholder="Filter by name..."
+                        placeholder="Search officers..."
+                        defaultValue={filters.search}
                         onChange={(e) => {
-                            const val = e.target.value.toLowerCase();
-                            table.setGlobalFilter(val);
+                            router.get('/Officers',
+                                { search: e.target.value },
+                                { preserveState: true, preserveScroll: true }
+                            );
                         }}
                         className="max-w-sm"
                     />
+                    <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    </div>
                     {table.getFilteredSelectedRowModel().rows.length > 0 && (
                         <Button
                             variant="destructive"

@@ -46,6 +46,7 @@ export default function Edit({ officer, categories }: Props) {
         birthday: officer.birthday,
         yearservice: officer.yearservice,
         image: null as File | null,
+        remove_image: false,
         _method: 'PUT',
     });
 
@@ -64,11 +65,19 @@ export default function Edit({ officer, categories }: Props) {
                     <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
                         <h2 className="mb-6 text-2xl font-bold">Edit Officer</h2>
                         <form onSubmit={submit} className="space-y-4">
-                            {officer.image && (
+                            {officer.image && !data.remove_image && (
                                 <div className="mb-4">
                                     <Label className="flex justify-self-center">Current Image</Label>
-                                    <div className="mt-2 flex justify-center">
+                                    <div className="mt-2 flex flex-col items-center gap-2">
                                         <img src={`/storage/${officer.image}`} alt={officer.name} className="h-32 w-32 rounded-full object-cover" />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="text-red-500 hover:text-red-700"
+                                            onClick={() => setData('remove_image', true)}
+                                        >
+                                            Remove Image
+                                        </Button>
                                     </div>
                                 </div>
                             )}

@@ -13,11 +13,29 @@ class OfficerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $officers = Officer::with('category')->latest()->paginate(5);
+        $search = $request->input('search');
+
+        $officers = Officer::with('category')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('position', 'like', "%{$search}%")
+                      ->orWhere('birthday', 'like', "%{$search}%")
+                      ->orWhere('yearservice', 'like', "%{$search}%")
+                      ->orWhereHas('category', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      });
+                });
+            })
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
         return Inertia::render('Admin/Officers/index', [
-            'officers' => $officers
+            'officers' => $officers,
+            'filters' => $request->only(['search'])
         ]);
     }
 
@@ -93,12 +111,22 @@ class OfficerController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Handle image update
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($officer->image) {
                 Storage::disk('public')->delete($officer->image);
             }
             $validated['image'] = $request->file('image')->store('officers', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            // If remove_image is true, delete the image and set it to null
+            if ($officer->image) {
+                Storage::disk('public')->delete($officer->image);
+            }
+            $validated['image'] = null;
+        } else {
+            // If no new image is uploaded and remove_image is false, keep the existing image
+            unset($validated['image']);
         }
 
         $officer->update($validated);
