@@ -15,10 +15,10 @@ return new class extends Migration
         if (!Schema::hasTable('galleries')) {
             Schema::create('galleries', function (Blueprint $table) {
                 $table->id();
-                $table->string('title');
-                $table->string('description');
+                $table->string('title')->nullable();
+                $table->string('description')->nullable();
                 $table->foreignIdFor(GalleryCategory::class)->constrained()->onDelete('cascade');
-                $table->integer('year');
+                $table->integer('year')->nullable();
                 $table->string('image')->nullable();
                 $table->timestamps();
             });

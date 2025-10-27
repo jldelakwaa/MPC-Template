@@ -15,10 +15,10 @@ return new class extends Migration
         Schema::create('officers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('officer_category_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('name');
-            $table->string('position');
-            $table->date('birthday');
-            $table->date('yearservice');
+            $table->string('name')->nullable();
+            $table->string('position')->nullable();
+            $table->date('birthday')->nullable();
+            $table->date('yearservice')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
         });
