@@ -4,7 +4,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { FolderDown, House, Info, LayoutGrid, Newspaper, PersonStanding } from 'lucide-react';
+import { FolderDown, House, Info, LayoutGrid, Newspaper, PersonStanding, Images } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -15,17 +15,22 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'HomePage Images',
-        href: '#',
+        href: '/HomePageImages',
         icon: House,
     },
     {
         title: 'News and Updates',
-        href: '/Officers',
+        href: '/NewsAndUpdates',
         icon: Newspaper,
     },
     {
-        title: 'Downloable Forms',
-        href: '/Officers',
+        title: 'Gallery',
+        href: '/Gallery',
+        icon: Images,
+    },
+    {
+        title: 'Downloadable Forms',
+        href: '/DownloadableForms',
         icon: FolderDown,
     },
     {
