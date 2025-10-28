@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\DownloadableController;
+use App\Http\Controllers\DownloadableCategoryController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\OfficerCategoryController;
 use App\Http\Controllers\FaqsController;
@@ -49,21 +51,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/FaqCategories/{id}', [FaqsCategoryController::class, 'destroy'])->name('Admin.FaqCategories.destroy');
 
 
-    // Downloadable Forms
-   Route::get('/DownloadableForms', [DownloadableFormsController::class, 'index'])->name('Admin.DownloadableForms.index');
-    Route::get('/DownloadableForms/create', [DownloadableFormsController::class, 'create'])->name('Admin.DownloadableForms.create');
-    Route::post('/DownloadableForms', [DownloadableFormsController::class, 'store'])->name('Admin.DownloadableForms.store');
-    Route::get('/DownloadableForms/{id}/edit', [DownloadableFormsController::class, 'edit'])->name('Admin.DownloadableForms.edit');
-    Route::put('/DownloadableForms/{id}', [DownloadableFormsController::class, 'update'])->name('Admin.DownloadableForms.update');
-    Route::delete('/DownloadableForms/{id}', [DownloadableFormsController::class, 'destroy'])->name('Admin.DownloadableForms.destroy');
+    // DownloadableController Forms
+   Route::get('/Downloadables', [DownloadableController::class, 'index'])->name('Admin.Downloadables.index');
+    Route::get('/Downloadables/create', [DownloadableController::class, 'create'])->name('Admin.Downloadables.create');
+    Route::post('/Downloadables', [DownloadableController::class, 'store'])->name('Admin.Downloadables.store');
+    Route::get('/Downloadables/{id}/edit', [DownloadableController::class, 'edit'])->name('Admin.Downloadables.edit');
+    Route::put('/Downloadables/{id}', [DownloadableController::class, 'update'])->name('Admin.Downloadables.update');
+    Route::delete('/Downloadables/{id}', [DownloadableController::class, 'destroy'])->name('Admin.Downloadables.destroy');
 
-    // Downloadable Form Categories
-    Route::get('/DownloadableFormCategories', [DownloadableFormCategoryController::class, 'index'])->name('Admin.DownloadableFormCategories.index');
-    Route::get('/DownloadableFormCategories/create', [DownloadableFormCategoryController::class, 'create'])->name('Admin.DownloadableFormCategories.create');
-    Route::post('/DownloadableFormCategories', [DownloadableFormCategoryController::class, 'store'])->name('Admin.DownloadableFormCategories.store');
-    Route::get('/DownloadableFormCategories/{id}/edit', [DownloadableFormCategoryController::class, 'edit'])->name('Admin.DownloadableFormCategories.edit');
-    Route::put('/DownloadableFormCategories/{id}', [DownloadableFormCategoryController::class, 'update'])->name('Admin.DownloadableFormCategories.update');
-    Route::delete('/DownloadableFormCategories/{id}', [DownloadableFormCategoryController::class, 'destroy'])->name('Admin.DownloadableFormCategories.destroy');
+    // DownloadableController Form Categories
+    Route::get('/DownloadableCategories', [DownloadableCategoryController::class, 'index'])->name('Admin.DownloadableCategories.index');
+    Route::get('/DownloadableCategories/create', [DownloadableCategoryController::class, 'create'])->name('Admin.DownloadableCategories.create');
+    Route::post('/DownloadableCategories', [DownloadableCategoryController::class, 'store'])->name('Admin.DownloadableCategories.store');
+    Route::get('/DownloadableCategories/{id}/edit', [DownloadableCategoryController::class, 'edit'])->name('Admin.DownloadableCategories.edit');
+    Route::put('/DownloadableCategories/{id}', [DownloadableCategoryController::class, 'update'])->name('Admin.DownloadableCategories.update');
+    Route::delete('/DownloadableCategories/{id}', [DownloadableCategoryController::class, 'destroy'])->name('Admin.DownloadableCategories.destroy');
 
     // Gallery
     Route::get('/Gallery', [GalleryController::class, 'index'])->name('Admin.Gallery.index');

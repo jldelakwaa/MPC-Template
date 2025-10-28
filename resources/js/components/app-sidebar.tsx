@@ -30,7 +30,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Downloadable Forms',
-        href: '/DownloadableForms',
+        href: '/Downloadables',
         icon: FolderDown,
     },
     {
