@@ -195,19 +195,16 @@ export default function OfficersIndex({ officers, filters }: Props) {
                 </div>
 
                 <div className="flex items-center py-4">
-                    <div className="relative max-w-sm w-full">
-                    <Input
-                        placeholder="Search officers..."
-                        defaultValue={filters.search}
-                        onChange={(e) => {
-                            router.get('/Officers',
-                                { search: e.target.value },
-                                { preserveState: true, preserveScroll: true }
-                            );
-                        }}
-                        className="max-w-sm"
-                    />
-                    <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full max-w-sm">
+                        <Input
+                            placeholder="Search officers..."
+                            defaultValue={filters.search}
+                            onChange={(e) => {
+                                router.get('/Officers', { search: e.target.value }, { preserveState: true, preserveScroll: true });
+                            }}
+                            className="max-w-sm"
+                        />
+                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
                     {table.getFilteredSelectedRowModel().rows.length > 0 && (
                         <Button

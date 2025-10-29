@@ -52,7 +52,7 @@ class DownloadableController extends Controller
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'required|file|max:10240', // Max 10MB
+            'file' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
         ]);
 
         if ($request->hasFile('file')) {
@@ -100,7 +100,7 @@ class DownloadableController extends Controller
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'nullable|file|max:10240', // Max 10MB
+            'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
         ]);
 
         if ($request->hasFile('file')) {
@@ -135,5 +135,30 @@ class DownloadableController extends Controller
                 'icon' => 'success',
                 'timer' => 3000,
             ]);
+    }
+
+      public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:downloadables,id',
+        ]);
+
+        $downloadables = Downloadable::whereIn('id', $request->input('ids'))->get();
+
+        foreach ($downloadables as $downloadable) {
+            if ($downloadable->file_path) {
+                Storage::disk('public')->delete($downloadable->file_path);
+            }
+            $downloadable->delete();
+        }
+
+         return redirect()->back()->with('swal', [
+            'title' => 'Deleted!',
+            'text' => 'Selected downloadables have been deleted.',
+            'icon' => 'success',
+            'timer' => 3000,
+        ]);
+
     }
 }

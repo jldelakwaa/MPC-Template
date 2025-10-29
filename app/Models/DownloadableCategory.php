@@ -8,7 +8,8 @@ class DownloadableCategory extends Model
 {
     protected $table = 'downloadable_categories';
 
-    protected $fillable = ['category_name'];
+    protected $fillable = ['category_name','description'];
+
 
     public function downloadables()
     {

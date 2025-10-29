@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2, Download } from 'lucide-react';
+import { ArrowUpDown, ChevronDown,Download, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -38,7 +38,7 @@ interface Downloadable {
     downloadable_category_id: number;
     category?: {
         id: number;
-        name: string;
+        category_name: string;
     } | null;
     created_at: string;
     updated_at: string;
@@ -88,6 +88,7 @@ const columns: ColumnDef<Downloadable>[] = [
             <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
         ),
     },
+
     {
         accessorKey: 'title',
         header: ({ column }) => (
@@ -103,7 +104,7 @@ const columns: ColumnDef<Downloadable>[] = [
         cell: ({ row }) =>
             row.original.category ? (
                 <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {row.original.category.name}
+                    {row.original.category.category_name}
                 </span>
             ) : (
                 <span className="text-muted-foreground italic">No category</span>
@@ -188,19 +189,16 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                 </div>
 
                 <div className="flex items-center py-4">
-                    <div className="relative max-w-sm w-full">
-                    <Input
-                        placeholder="Search downloadables..."
-                        defaultValue={filters.search}
-                        onChange={(e) => {
-                            router.get('/Downloadables',
-                                { search: e.target.value },
-                                { preserveState: true, preserveScroll: true }
-                            );
-                        }}
-                        className="max-w-sm"
-                    />
-                    <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full max-w-sm">
+                        <Input
+                            placeholder="Search downloadables..."
+                            defaultValue={filters.search}
+                            onChange={(e) => {
+                                router.get('/Downloadables', { search: e.target.value }, { preserveState: true, preserveScroll: true });
+                            }}
+                            className="max-w-sm"
+                        />
+                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

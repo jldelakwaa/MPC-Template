@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('downloadable_categories', function (Blueprint $table) {
             $table->id();
             $table->string('category_name')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

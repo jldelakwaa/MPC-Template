@@ -4,7 +4,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { FolderDown, House, Info, LayoutGrid, Newspaper, PersonStanding, Images } from 'lucide-react';
+import { FolderDown, House, Images, Info, LayoutGrid, Newspaper, PersonStanding } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [

@@ -17,7 +17,7 @@ class DownloadableCategoryController extends Controller
     {
         $downloadables = DownloadableCategory::withCount('downloadables')
             ->when($request->input('search'), function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%");
+                $query->where('category_name', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate(10);
@@ -44,7 +44,7 @@ class DownloadableCategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:downloadable_categories,name',
+            'category_name' => 'required|string|max:255|unique:downloadable_categories,category_name',
             'description' => 'nullable|string',
         ]);
 
@@ -84,7 +84,7 @@ class DownloadableCategoryController extends Controller
         $category = DownloadableCategory::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:downloadable_categories,name,' . $id,
+            'category_name' => 'required|string|max:255|unique:downloadable_categories,category_name,' . $id,
             'description' => 'nullable|string',
         ]);
 
@@ -107,5 +107,30 @@ class DownloadableCategoryController extends Controller
 
         return redirect()->route('Admin.DownloadableCategories.index')
             ->with('success', 'Downloadable Category deleted successfully.');
+    }
+
+      public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:downloadable_categories,id',
+        ]);
+
+        $categories = DownloadableCategory::whereIn('id', $request->input('ids'))->get();
+
+        foreach ($categories as $category) {
+            // No files associated directly with DownloadableCategory,
+            // but if there were, this is where you'd delete them.
+            // For now, just delete the category.
+            $category->delete();
+        }
+
+         return redirect()->back()->with('swal', [
+            'title' => 'Deleted!',
+            'text' => 'Selected downloadable categories have been deleted.',
+            'icon' => 'success',
+            'timer' => 3000,
+        ]);
+
     }
 }

@@ -32,7 +32,7 @@ import { Head, Link, router } from '@inertiajs/react';
 
 interface Downloadable {
     id: string;
-    name: string;
+    category_name: string;
     description: string | null;
     downloadables_count: number;
     created_at: string;
@@ -84,7 +84,7 @@ const columns: ColumnDef<Downloadable>[] = [
         ),
     },
     {
-        accessorKey: 'name',
+        accessorKey: 'category_name',
         header: ({ column }) => (
             <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 Name
@@ -97,9 +97,7 @@ const columns: ColumnDef<Downloadable>[] = [
         header: 'Description',
         cell: ({ row }) =>
             row.original.description ? (
-                <span className="text-sm text-muted-foreground">
-                    {row.original.description}
-                </span>
+                <span className="text-sm text-muted-foreground">{row.original.description}</span>
             ) : (
                 <span className="text-muted-foreground italic">No description</span>
             ),
@@ -166,7 +164,8 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                 <div className="mb-4 flex justify-end gap-2">
                     <Link href="/Downloadables">
                         <Button variant="outline">
-                            <FolderKanban className="mr-2 h-4 w-4" />Downloadable
+                            <FolderKanban className="mr-2 h-4 w-4" />
+                            Downloadable
                         </Button>
                     </Link>
                     <Link href="/DownloadableCategories/create">
@@ -177,20 +176,16 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                 </div>
 
                 <div className="flex items-center py-4">
-                    <div className="relative max-w-sm w-full">
+                    <div className="relative w-full max-w-sm">
                         <Input
                             placeholder="Search categories..."
                             defaultValue={filters.search}
                             onChange={(e) => {
-                                router.get(
-                                    '/DownloadableCategories',
-                                    { search: e.target.value },
-                                    { preserveState: true, preserveScroll: true },
-                                );
+                                router.get('/DownloadableCategories', { search: e.target.value }, { preserveState: true, preserveScroll: true });
                             }}
                             className="max-w-sm"
                         />
-                        <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -254,15 +249,9 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                             if (link.url === null) {
                                 return (
                                     <PaginationItem key={i}>
-                                        {link.label.includes('Previous') && (
-                                            <ShadcnPaginationPrevious className="cursor-not-allowed opacity-50" />
-                                        )}
-                                        {link.label.includes('Next') && (
-                                            <ShadcnPaginationNext className="cursor-not-allowed opacity-50" />
-                                        )}
-                                        {!link.label.includes('Previous') && !link.label.includes('Next') && (
-                                            <PaginationEllipsis />
-                                        )}
+                                        {link.label.includes('Previous') && <ShadcnPaginationPrevious className="cursor-not-allowed opacity-50" />}
+                                        {link.label.includes('Next') && <ShadcnPaginationNext className="cursor-not-allowed opacity-50" />}
+                                        {!link.label.includes('Previous') && !link.label.includes('Next') && <PaginationEllipsis />}
                                     </PaginationItem>
                                 );
                             }
@@ -270,7 +259,9 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                             if (link.label.includes('Previous')) {
                                 return (
                                     <PaginationItem key={i} className="cursor-pointer">
-                                        <PaginationLink href={link.url} isActive={link.active}>{link.label}</PaginationLink>
+                                        <PaginationLink href={link.url} isActive={link.active}>
+                                            {link.label}
+                                        </PaginationLink>
                                     </PaginationItem>
                                 );
                             }
@@ -278,7 +269,9 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                             if (link.label.includes('Next')) {
                                 return (
                                     <PaginationItem key={i} className="cursor-pointer">
-                                        <PaginationLink href={link.url} isActive={link.active}>{link.label}</PaginationLink>
+                                        <PaginationLink href={link.url} isActive={link.active}>
+                                            {link.label}
+                                        </PaginationLink>
                                     </PaginationItem>
                                 );
                             }
