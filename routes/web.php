@@ -4,6 +4,8 @@ use App\Http\Controllers\DownloadableCategoryController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\OfficerCategoryController;
 use App\Http\Controllers\FaqsController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\GalleryCategoryController;
 use App\Http\Controllers\FaqsCategoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,12 +78,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/Gallery/{id}', [GalleryController::class, 'destroy'])->name('Admin.Gallery.destroy');
 
     // Gallery Categories
-    Route::get('/GalleryCategories', [GalleryCategoryController::class, 'index'])->name('Admin.GalleryCategories.index');
-    Route::get('/GalleryCategories/create', [GalleryCategoryController::class, 'create'])->name('Admin.GalleryCategories.create');
-    Route::post('/GalleryCategories', [GalleryCategoryController::class, 'store'])->name('Admin.GalleryCategories.store');
-    Route::get('/GalleryCategories/{id}/edit', [GalleryCategoryController::class, 'edit'])->name('Admin.GalleryCategories.edit');
-    Route::put('/GalleryCategories/{id}', [GalleryCategoryController::class, 'update'])->name('Admin.GalleryCategories.update');
-    Route::delete('/GalleryCategories/{id}', [GalleryCategoryController::class, 'destroy'])->name('Admin.GalleryCategories.destroy');
+    Route::get('/GalleryCategory', [GalleryCategoryController::class, 'index'])->name('Admin.GalleryCategory.index');
+    Route::get('/GalleryCategory/create', [GalleryCategoryController::class, 'create'])->name('Admin.GalleryCategory.create');
+    Route::post('/GalleryCategory', [GalleryCategoryController::class, 'store'])->name('Admin.GalleryCategory.store');
+    Route::get('/GalleryCategory/{id}/edit', [GalleryCategoryController::class, 'edit'])->name('Admin.GalleryCategory.edit');
+    Route::put('/GalleryCategory/{id}', [GalleryCategoryController::class, 'update'])->name('Admin.GalleryCategory.update');
+    Route::delete('/GalleryCategory/{id}', [GalleryCategoryController::class, 'destroy'])->name('Admin.GalleryCategory.destroy');
 
     // News
     Route::get('/News', [NewsController::class, 'index'])->name('Admin.News.index');

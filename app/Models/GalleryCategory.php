@@ -14,6 +14,6 @@ class GalleryCategory extends Model
 
     public function galleries(): HasMany
     {
-        return $this->hasMany(Gallery::class, 'category_id');
+        return $this->hasMany(Gallery::class, 'gallery_category_id');
     }
 }

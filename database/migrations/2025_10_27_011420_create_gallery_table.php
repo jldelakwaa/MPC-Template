@@ -12,17 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('galleries')) {
+
             Schema::create('galleries', function (Blueprint $table) {
                 $table->id();
                 $table->string('title')->nullable();
                 $table->string('description')->nullable();
                 $table->foreignIdFor(GalleryCategory::class)->constrained()->onDelete('cascade');
-                $table->integer('year')->nullable();
+                $table->date('year')->nullable();
                 $table->string('image')->nullable();
                 $table->timestamps();
             });
-        }
+
     }
 
     /**

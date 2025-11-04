@@ -10,13 +10,17 @@ class Gallery extends Model
     protected $fillable = [
         'title',
         'description',
-        'category_id',
+        'gallery_category_id',
         'year',
         'image',
     ];
 
+    protected $casts = [
+        'year' => 'date',
+    ];
+
     public function category(): BelongsTo
     {
-        return $this->belongsTo(GalleryCategory::class, 'category_id');
+        return $this->belongsTo(GalleryCategory::class, 'gallery_category_id');
     }
 }
