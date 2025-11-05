@@ -21,8 +21,8 @@ import {
     PaginationEllipsis,
     PaginationItem,
     PaginationLink,
-    PaginationNext as ShadcnPaginationNext,
-    PaginationPrevious as ShadcnPaginationPrevious,
+    PaginationNext,
+    PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -30,7 +30,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 
-interface Downloadable {
+interface DownloadableCategory {
     id: string;
     category_name: string;
     description: string | null;
@@ -45,8 +45,8 @@ interface PaginatorLink {
     active: boolean;
 }
 
-interface PaginatedDownloadables {
-    data: Downloadable[];
+interface PaginatedDownloadableCategories {
+    data: DownloadableCategory[];
     links: PaginatorLink[];
     next_page_url: string | null;
     prev_page_url: string | null;
@@ -55,7 +55,7 @@ interface PaginatedDownloadables {
 }
 
 interface Props {
-    downloadables: PaginatedDownloadables;
+    downloadables: PaginatedDownloadableCategories;
     filters: {
         search?: string;
     };
@@ -69,7 +69,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // 🧱 Column Definitions
-const columns: ColumnDef<Downloadable>[] = [
+const columns: ColumnDef<DownloadableCategory>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -105,6 +105,11 @@ const columns: ColumnDef<Downloadable>[] = [
     {
         accessorKey: 'downloadables_count',
         header: 'Downloadables Count',
+        cell: ({ row }) => (
+            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                {row.original.downloadables_count}
+            </span>
+        ),
     },
     {
         accessorKey: 'created_at',
@@ -115,7 +120,7 @@ const columns: ColumnDef<Downloadable>[] = [
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-            const downloadable = row.original;
+            const category = row.original;
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -125,16 +130,16 @@ const columns: ColumnDef<Downloadable>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild className="cursor-pointer">
-                            <Link href={`/DownloadableCategories/${downloadable.id}/edit`}>
+                        <DropdownMenuItem asChild>
+                            <Link href={`/DownloadableCategories/${category.id}/edit`}>
                                 <Pencil className="mr-2 h-4 w-4" /> Edit
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete this item?')) {
-                                    router.delete(`/DownloadableCategories/${downloadable.id}`, {
+                                if (confirm('Are you sure you want to delete this category?')) {
+                                    router.delete(`/DownloadableCategories/${category.id}`, {
                                         preserveScroll: true,
                                     });
                                 }
@@ -150,7 +155,7 @@ const columns: ColumnDef<Downloadable>[] = [
 ];
 
 // 🧮 Main Page Component
-export default function DownloadablesIndex({ downloadables, filters }: Props) {
+export default function DownloadableCategoriesIndex({ downloadables, filters }: Props) {
     const table = useReactTable({
         data: downloadables.data,
         columns,
@@ -164,13 +169,12 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                 <div className="mb-4 flex justify-end gap-2">
                     <Link href="/Downloadables">
                         <Button variant="outline">
-                            <FolderKanban className="mr-2 h-4 w-4" />
-                            Downloadable
+                            <FolderKanban /> Manage Downloadables
                         </Button>
                     </Link>
                     <Link href="/DownloadableCategories/create">
                         <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Create Category
+                            <Plus /> Create Category
                         </Button>
                     </Link>
                 </div>
@@ -187,6 +191,26 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                         />
                         <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
+                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                        <Button
+                            variant="destructive"
+                            className="ml-2"
+                            onClick={() => {
+                                if (confirm('Are you sure you want to delete selected categories?')) {
+                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as DownloadableCategory).id);
+                                    router.delete('/DownloadableCategories/bulk-delete', {
+                                        data: { ids: selectedIds },
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            table.toggleAllPageRowsSelected(false);
+                                        },
+                                    });
+                                }
+                            }}
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete Selected ({table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                    )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
@@ -249,29 +273,29 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                             if (link.url === null) {
                                 return (
                                     <PaginationItem key={i}>
-                                        {link.label.includes('Previous') && <ShadcnPaginationPrevious className="cursor-not-allowed opacity-50" />}
-                                        {link.label.includes('Next') && <ShadcnPaginationNext className="cursor-not-allowed opacity-50" />}
-                                        {!link.label.includes('Previous') && !link.label.includes('Next') && <PaginationEllipsis />}
+                                        {link.label.includes('Previous') ? (
+                                            <PaginationPrevious className="cursor-not-allowed opacity-50" />
+                                        ) : link.label.includes('Next') ? (
+                                            <PaginationNext className="cursor-not-allowed opacity-50" />
+                                        ) : (
+                                            <PaginationEllipsis />
+                                        )}
                                     </PaginationItem>
                                 );
                             }
 
                             if (link.label.includes('Previous')) {
                                 return (
-                                    <PaginationItem key={i} className="cursor-pointer">
-                                        <PaginationLink href={link.url} isActive={link.active}>
-                                            {link.label}
-                                        </PaginationLink>
+                                    <PaginationItem key={i}>
+                                        <PaginationPrevious href={link.url} />
                                     </PaginationItem>
                                 );
                             }
 
                             if (link.label.includes('Next')) {
                                 return (
-                                    <PaginationItem key={i} className="cursor-pointer">
-                                        <PaginationLink href={link.url} isActive={link.active}>
-                                            {link.label}
-                                        </PaginationLink>
+                                    <PaginationItem key={i}>
+                                        <PaginationNext href={link.url} />
                                     </PaginationItem>
                                 );
                             }

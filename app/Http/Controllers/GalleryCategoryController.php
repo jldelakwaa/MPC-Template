@@ -12,11 +12,23 @@ class GalleryCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $categories = GalleryCategory::withCount('galleries')->latest()->get();
-        return Inertia::render('Admin/GalleryCategory/index', [
-            'categories' => $categories
+        $search = $request->query('search');
+
+        $categories = GalleryCategory::withCount('galleries')
+            ->when($search, function ($query, $search) {
+                $query->where('category_name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('Admin/GalleryCategory/Index', [
+            'categories' => $categories,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
@@ -25,7 +37,7 @@ class GalleryCategoryController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Admin/GalleryCategory/create');
+        return Inertia::render('Admin/GalleryCategory/Create');
     }
 
     /**
@@ -49,7 +61,7 @@ class GalleryCategoryController extends Controller
     public function show(string $id): Response
     {
         $category = GalleryCategory::with('galleries')->findOrFail($id);
-        return Inertia::render('Admin/GalleryCategory/show', [
+        return Inertia::render('Admin/GalleryCategory/Show', [
             'category' => $category
         ]);
     }
@@ -60,7 +72,7 @@ class GalleryCategoryController extends Controller
     public function edit(string $id): Response
     {
         $category = GalleryCategory::findOrFail($id);
-        return Inertia::render('Admin/GalleryCategory/edit', [
+        return Inertia::render('Admin/GalleryCategory/Edit', [
             'category' => $category
         ]);
     }
@@ -92,5 +104,21 @@ class GalleryCategoryController extends Controller
 
         return redirect()->route('Admin.GalleryCategory.index')
             ->with('success', 'Gallery Category deleted successfully.');
+    }
+
+    /**
+     * Bulk delete categories
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:gallery_categories,id',
+        ]);
+
+        GalleryCategory::whereIn('id', $request->ids)->delete();
+
+        return redirect()->route('Admin.GalleryCategory.index')
+            ->with('success', 'Selected categories deleted successfully.');
     }
 }

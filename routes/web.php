@@ -62,12 +62,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/Downloadables/{id}', [DownloadableController::class, 'destroy'])->name('Admin.Downloadables.destroy');
 
     // DownloadableController Form Categories
-    Route::get('/DownloadableCategories', [DownloadableCategoryController::class, 'index'])->name('Admin.DownloadableCategories.index');
-    Route::get('/DownloadableCategories/create', [DownloadableCategoryController::class, 'create'])->name('Admin.DownloadableCategories.create');
-    Route::post('/DownloadableCategories', [DownloadableCategoryController::class, 'store'])->name('Admin.DownloadableCategories.store');
-    Route::get('/DownloadableCategories/{id}/edit', [DownloadableCategoryController::class, 'edit'])->name('Admin.DownloadableCategories.edit');
-    Route::put('/DownloadableCategories/{id}', [DownloadableCategoryController::class, 'update'])->name('Admin.DownloadableCategories.update');
-    Route::delete('/DownloadableCategories/{id}', [DownloadableCategoryController::class, 'destroy'])->name('Admin.DownloadableCategories.destroy');
+  Route::get('/DownloadableCategories', [DownloadableCategoryController::class, 'index'])->name('Admin.DownloadableCategories.index');
+Route::get('/DownloadableCategories/create', [DownloadableCategoryController::class, 'create'])->name('Admin.DownloadableCategories.create');
+Route::post('/DownloadableCategories', [DownloadableCategoryController::class, 'store'])->name('Admin.DownloadableCategories.store');
+Route::get('/DownloadableCategories/{id}/edit', [DownloadableCategoryController::class, 'edit'])->name('Admin.DownloadableCategories.edit');
+Route::put('/DownloadableCategories/{id}', [DownloadableCategoryController::class, 'update'])->name('Admin.DownloadableCategories.update');
+Route::delete('/DownloadableCategories/{id}', [DownloadableCategoryController::class, 'destroy'])->name('Admin.DownloadableCategories.destroy');
+Route::delete('/DownloadableCategories/bulk-delete', [DownloadableCategoryController::class, 'bulkDestroy'])->name('Admin.DownloadableCategories.bulkDestroy');
 
     // Gallery
     Route::get('/Gallery', [GalleryController::class, 'index'])->name('Admin.Gallery.index');
@@ -76,6 +77,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/Gallery/{id}/edit', [GalleryController::class, 'edit'])->name('Admin.Gallery.edit');
     Route::put('/Gallery/{id}', [GalleryController::class, 'update'])->name('Admin.Gallery.update');
     Route::delete('/Gallery/{id}', [GalleryController::class, 'destroy'])->name('Admin.Gallery.destroy');
+    Route::delete('/Gallery/bulk-delete', [GalleryController::class, 'bulkDestroy'])->name('Admin.Gallery.bulkDestroy');
 
     // Gallery Categories
     Route::get('/GalleryCategory', [GalleryCategoryController::class, 'index'])->name('Admin.GalleryCategory.index');
@@ -84,6 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/GalleryCategory/{id}/edit', [GalleryCategoryController::class, 'edit'])->name('Admin.GalleryCategory.edit');
     Route::put('/GalleryCategory/{id}', [GalleryCategoryController::class, 'update'])->name('Admin.GalleryCategory.update');
     Route::delete('/GalleryCategory/{id}', [GalleryCategoryController::class, 'destroy'])->name('Admin.GalleryCategory.destroy');
+    Route::delete('/GalleryCategory/bulk-delete', [GalleryCategoryController::class, 'bulkDestroy'])->name('Admin.GalleryCategory.bulkDestroy');
 
     // News
     Route::get('/News', [NewsController::class, 'index'])->name('Admin.News.index');

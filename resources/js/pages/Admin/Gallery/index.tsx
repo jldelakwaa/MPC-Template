@@ -34,11 +34,12 @@ interface Gallery {
     id: number;
     title: string;
     description: string;
-    year: number;
+    year: string; // Changed to string to match form handling
     image: string | null;
+    gallery_category_id: number; // Fixed: consistent field name
     category?: {
         id: number;
-        name: string;
+        category_name: string; // Fixed: category_name instead of name
     } | null;
     created_at: string;
     updated_at: string;
@@ -93,9 +94,9 @@ const columns: ColumnDef<Gallery>[] = [
         header: 'Image',
         cell: ({ row }) =>
             row.original.image ? (
-                <img src={`/storage/${row.original.image}`} alt={row.original.title} className="h-12 w-12 rounded-full object-cover" />
+                <img src={`/storage/${row.original.image}`} alt={row.original.title} className="h-12 w-12 rounded object-cover" />
             ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+                <div className="flex h-12 w-12 items-center justify-center rounded bg-gray-200">
                     <span className="text-xs text-gray-500">No Image</span>
                 </div>
             ),
@@ -112,6 +113,7 @@ const columns: ColumnDef<Gallery>[] = [
     {
         accessorKey: 'description',
         header: 'Description',
+        cell: ({ row }) => <div className="max-w-md truncate">{row.original.description}</div>,
     },
     {
         accessorKey: 'category',
@@ -119,7 +121,7 @@ const columns: ColumnDef<Gallery>[] = [
         cell: ({ row }) =>
             row.original.category ? (
                 <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {row.original.category.name}
+                    {row.original.category.category_name} {/* Fixed: category_name */}
                 </span>
             ) : (
                 <span className="text-muted-foreground italic">No category</span>
@@ -128,7 +130,10 @@ const columns: ColumnDef<Gallery>[] = [
     {
         accessorKey: 'year',
         header: 'Year',
-        cell: ({ row }) => new Date(row.original.year).getFullYear(),
+        cell: ({ row }) => {
+            const year = row.original.year;
+            return year ? new Date(year).getFullYear() : 'N/A';
+        },
     },
     {
         id: 'actions',
@@ -211,8 +216,9 @@ export default function GalleryIndex({ gallery, filters }: Props) {
                             className="ml-2"
                             onClick={() => {
                                 if (confirm('Are you sure you want to delete selected gallery items?')) {
-                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as Gallery).id);
-                                    router.post('/Gallery/bulk-destroy', { ids: selectedIds }, {
+                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id);
+                                    router.delete('/Gallery/bulk-delete', {
+                                        data: { ids: selectedIds },
                                         preserveScroll: true,
                                         onSuccess: () => {
                                             table.toggleAllPageRowsSelected(false);

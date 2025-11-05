@@ -15,7 +15,14 @@ class FaqsController extends Controller
      */
     public function index()
     {
-        $faqs = FaQC::with('faqCategory')->latest()->paginate(5);
+        $search = request()->input('search');
+
+        $faqs = FaQC::with('faqCategory')
+            ->when($search, function ($query, $search) {
+                $query->where('question', 'like', "%{$search}%")
+                      ->orWhere('answer', 'like', "%{$search}%");
+            })
+            ->latest()->paginate(5);
         return Inertia::render('Admin/Faq/index', [
             'faqs' => $faqs
         ]);
@@ -104,5 +111,23 @@ class FaqsController extends Controller
             'icon' => 'success',
             'timer' => 3000,
             ]);
+    }
+
+     public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:faqs_c,id',
+        ]);
+
+        FaQC::whereIn('id', $request->input('ids'))->delete();
+
+         return redirect()->back()->with('swal', [
+            'title' => 'Deleted!',
+            'text' => 'Selected FAQs have been deleted successfully.',
+            'icon' => 'success',
+            'timer' => 3000,
+            ]);
+
     }
 }

@@ -18,7 +18,7 @@ interface Props {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Gallery Categories',
-        href: '/admin/gallery/categories',
+        href: '/GalleryCategory',
     },
     {
         title: 'Edit Category',
@@ -33,7 +33,7 @@ export default function Edit({ category }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(`/admin/gallery/categories/${category.id}`);
+        put(`/GalleryCategory/${category.id}`);
     };
 
     return (

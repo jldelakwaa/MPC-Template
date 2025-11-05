@@ -19,14 +19,19 @@ class DownloadableController extends Controller
 
         $downloadables = Downloadable::with('category')
             ->when($search, function ($query, $search) {
-                $query->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%")
+                      ->orWhereHas('category', function ($q) use ($search) {
+                          $q->where('category_name', 'like', "%{$search}%");
+                      });
+                });
             })
             ->latest()
-            ->paginate(5)
+            ->paginate(10) // Increased from 5 to 10
             ->withQueryString();
 
-        return Inertia::render('Admin/Downloadables/index', [
+        return Inertia::render('Admin/Downloadables/Index', [ // Capital Index
             'downloadables' => $downloadables,
             'filters' => $request->only(['search'])
         ]);
@@ -38,7 +43,7 @@ class DownloadableController extends Controller
     public function create()
     {
         $categories = DownloadableCategory::all();
-        return Inertia::render('Admin/Downloadables/create', [
+        return Inertia::render('Admin/Downloadables/Create', [ // Capital Create
             'categories' => $categories
         ]);
     }
@@ -50,9 +55,9 @@ class DownloadableController extends Controller
     {
         $validated = $request->validate([
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
-            'title' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255', // Changed to required
             'description' => 'nullable|string',
-            'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
+            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar|max:10240', // Added required and more file types
         ]);
 
         if ($request->hasFile('file')) {
@@ -71,7 +76,7 @@ class DownloadableController extends Controller
     public function show(string $id)
     {
         $downloadable = Downloadable::with('category')->findOrFail($id);
-        return Inertia::render('Admin/Downloadables/show', [
+        return Inertia::render('Admin/Downloadables/Show', [ // Capital Show
             'downloadable' => $downloadable
         ]);
     }
@@ -83,7 +88,7 @@ class DownloadableController extends Controller
     {
         $downloadable = Downloadable::findOrFail($id);
         $categories = DownloadableCategory::all();
-        return Inertia::render('Admin/Downloadables/edit', [
+        return Inertia::render('Admin/Downloadables/Edit', [ // Capital Edit
             'downloadable' => $downloadable,
             'categories' => $categories
         ]);
@@ -98,9 +103,9 @@ class DownloadableController extends Controller
 
         $validated = $request->validate([
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
-            'title' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255', // Changed to required
             'description' => 'nullable|string',
-            'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar|max:10240', // Made optional for updates
         ]);
 
         if ($request->hasFile('file')) {
@@ -109,6 +114,9 @@ class DownloadableController extends Controller
                 Storage::disk('public')->delete($downloadable->file_path);
             }
             $validated['file_path'] = $request->file('file')->store('downloadables', 'public');
+        } else {
+            // Keep the existing file path if no new file is uploaded
+            $validated['file_path'] = $downloadable->file_path;
         }
 
         $downloadable->update($validated);
@@ -129,15 +137,10 @@ class DownloadableController extends Controller
         $downloadable->delete();
 
         return redirect()->route('Admin.Downloadables.index')
-            ->with('swal', [
-                'title' => 'Deleted!',
-                'text' => 'Downloadable deleted successfully.',
-                'icon' => 'success',
-                'timer' => 3000,
-            ]);
+            ->with('success', 'Downloadable deleted successfully.');
     }
 
-      public function bulkDestroy(Request $request)
+    public function bulkDestroy(Request $request)
     {
         $request->validate([
             'ids' => 'required|array',
@@ -153,12 +156,6 @@ class DownloadableController extends Controller
             $downloadable->delete();
         }
 
-         return redirect()->back()->with('swal', [
-            'title' => 'Deleted!',
-            'text' => 'Selected downloadables have been deleted.',
-            'icon' => 'success',
-            'timer' => 3000,
-        ]);
-
+        return redirect()->back()->with('success', 'Selected downloadables have been deleted.');
     }
 }

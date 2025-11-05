@@ -27,7 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Index({ categories }: Props) {
+export default function Create({ categories }: Props) { // Changed from 'Index' to 'Create'
     const { data, setData, post, processing, errors } = useForm({
         gallery_category_id: '',
         title: '',
@@ -40,6 +40,16 @@ export default function Index({ categories }: Props) {
         e.preventDefault();
         post('/Gallery', {
             forceFormData: true,
+            onSuccess: () => {
+                // Reset form after successful submission
+                setData({
+                    gallery_category_id: '',
+                    title: '',
+                    description: '',
+                    year: '',
+                    image: null,
+                });
+            },
         });
     };
 
@@ -52,8 +62,12 @@ export default function Index({ categories }: Props) {
                         <h2 className="mb-6 text-2xl font-bold">Create New Gallery Item</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
-                                <Label htmlFor="gallery_category_id">Category</Label>
-                                <Select value={data.gallery_category_id} onValueChange={(value) => setData('gallery_category_id', value)}>
+                                <Label htmlFor="gallery_category_id">Category *</Label>
+                                <Select
+                                    value={data.gallery_category_id}
+                                    onValueChange={(value) => setData('gallery_category_id', value)}
+                                    required
+                                >
                                     <SelectTrigger className="mt-1">
                                         <SelectValue placeholder="Select a category" />
                                     </SelectTrigger>
@@ -65,7 +79,9 @@ export default function Index({ categories }: Props) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.gallery_category_id && <p className="mt-1 text-sm text-red-600">{errors.gallery_category_id}</p>}
+                                {errors.gallery_category_id && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.gallery_category_id}</p>
+                                )}
                             </div>
 
                             <div>
@@ -79,7 +95,9 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('title', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                                {errors.title && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                                )}
                             </div>
 
                             <div>
@@ -93,20 +111,24 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('description', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                                {errors.description && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                                )}
                             </div>
+
                             <div>
                                 <Label htmlFor="year">Year</Label>
                                 <Input
                                     id="year"
-                                    placeholder="Enter year"
                                     name="year"
                                     type="date"
                                     value={data.year}
                                     onChange={(e) => setData('year', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.year && <p className="mt-1 text-sm text-red-600">{errors.year}</p>}
+                                {errors.year && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.year}</p>
+                                )}
                             </div>
 
                             <div>
@@ -119,14 +141,27 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('image', e.target.files?.[0] || null)}
                                     className="mt-1"
                                 />
-                                {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                                {errors.image && (
+                                    <p className="mt-1 text-sm text-red-600">{errors.image}</p>
+                                )}
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    Supported formats: JPEG, PNG, JPG, GIF. Max size: 10MB.
+                                </p>
                             </div>
 
-                            <div className="flex justify-end gap-2">
-                                <Button type="button" variant="outline" onClick={() => window.history.back()}>
+                            <div className="flex justify-end gap-2 pt-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => window.history.back()}
+                                >
                                     Cancel
                                 </Button>
-                                <Button type="submit" disabled={processing}>
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="min-w-24"
+                                >
                                     {processing ? 'Creating...' : 'Create Item'}
                                 </Button>
                             </div>

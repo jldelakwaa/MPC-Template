@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Gallery;
-use Inertia\Inertia;
 use App\Models\GalleryCategory;
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-      public function index(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
 
@@ -18,30 +19,28 @@ class GalleryController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
                       ->orWhere('description', 'like', "%{$search}%")
-                      ->orWhere('category_id', 'like', "%{$search}%")
                       ->orWhereHas('category', function ($q) use ($search) {
-                          $q->where('name', 'like', "%{$search}%");
+                          $q->where('category_name', 'like', "%{$search}%"); // Fixed: category_name instead of name
                       });
                 });
             })
             ->latest()
-            ->paginate(5)
+            ->paginate(10) // Increased from 5 to 10 for better UX
             ->withQueryString();
 
-        return Inertia::render('Admin/Gallery/index', [
+        return Inertia::render('Admin/Gallery/Index', [ // Fixed: Capital Index
             'gallery' => $gallery,
             'filters' => $request->only(['search'])
         ]);
     }
 
-
-   /**
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $categories = GalleryCategory::all();
-        return Inertia::render('Admin/Gallery/create', [
+        return Inertia::render('Admin/Gallery/Create', [ // Fixed: Capital Create
             'categories' => $categories
         ]);
     }
@@ -84,7 +83,7 @@ class GalleryController extends Controller
     {
         $gallery = Gallery::findOrFail($id);
         $categories = GalleryCategory::all();
-        return Inertia::render('Admin/Gallery/edit', [
+        return Inertia::render('Admin/Gallery/Edit', [ // Fixed: Capital Edit
             'gallery' => $gallery,
             'categories' => $categories
         ]);
@@ -100,7 +99,7 @@ class GalleryController extends Controller
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:gallery_categories,id',
+            'gallery_category_id' => 'required|exists:gallery_categories,id', // Fixed: consistent field name
             'year' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -144,12 +143,7 @@ class GalleryController extends Controller
         $gallery->delete();
 
         return redirect()->route('Admin.Gallery.index')
-            ->with('swal', [
-                'title' => 'Deleted!',
-                'text' => 'Gallery item deleted successfully.',
-                'icon' => 'success',
-                'timer' => 3000,
-            ]);
+            ->with('success', 'Gallery item deleted successfully.');
     }
 
     public function bulkDestroy(Request $request)
@@ -168,7 +162,6 @@ class GalleryController extends Controller
             $gallery->delete();
         }
 
-         return redirect()->back()->with('success', 'Selected gallery items have been deleted.');
-
+        return redirect()->back()->with('success', 'Selected gallery items have been deleted.');
     }
 }

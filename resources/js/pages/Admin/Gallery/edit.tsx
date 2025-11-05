@@ -10,14 +10,14 @@ import { FormEventHandler } from 'react';
 
 interface GalleryCategory {
     id: number;
-    name: string;
+    category_name: string; // Fixed: category_name
 }
 
 interface Gallery {
     id: number;
     title: string;
     description: string;
-    category_id: number;
+    gallery_category_id: number; // Fixed: consistent field name
     year: string;
     image: string | null;
 }
@@ -43,8 +43,8 @@ export default function Edit({ gallery, categories }: Props) {
         _method: 'PUT',
         title: gallery.title,
         description: gallery.description,
-        category_id: gallery.category_id.toString(),
-        year: new Date(gallery.year).toISOString().split('T')[0],
+        gallery_category_id: gallery.gallery_category_id.toString(), // Fixed: consistent field name
+        year: gallery.year ? new Date(gallery.year).toISOString().split('T')[0] : '', // Fixed: handle null year
         image: null as File | null,
         remove_image: false,
     });
@@ -65,20 +65,20 @@ export default function Edit({ gallery, categories }: Props) {
                         <h2 className="mb-6 text-2xl font-bold">Edit Gallery Item</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
-                                <Label htmlFor="category_id">Category</Label>
-                                <Select value={data.category_id} onValueChange={(value) => setData('category_id', value)}>
+                                <Label htmlFor="gallery_category_id">Category</Label>
+                                <Select value={data.gallery_category_id} onValueChange={(value) => setData('gallery_category_id', value)}>
                                     <SelectTrigger className="mt-1">
                                         <SelectValue placeholder="Select a category" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {categories.map((category) => (
                                             <SelectItem key={category.id} value={category.id.toString()}>
-                                                {category.name}
+                                                {category.category_name} {/* Fixed: category_name */}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.category_id && <p className="mt-1 text-sm text-red-600">{errors.category_id}</p>}
+                                {errors.gallery_category_id && <p className="mt-1 text-sm text-red-600">{errors.gallery_category_id}</p>}
                             </div>
 
                             <div>
@@ -124,7 +124,7 @@ export default function Edit({ gallery, categories }: Props) {
 
                             <div>
                                 <Label htmlFor="image">Image</Label>
-                                {gallery.image && !data.image && (
+                                {gallery.image && !data.remove_image && (
                                     <div className="mt-2">
                                         <img src={`/storage/${gallery.image}`} alt={gallery.title} className="h-20 w-20 rounded-md object-cover" />
                                         <div className="mt-2 flex items-center">
@@ -152,7 +152,7 @@ export default function Edit({ gallery, categories }: Props) {
 
                             <div className="flex justify-end gap-2">
                                 <Button type="button" variant="outline" onClick={() => router.get('/Gallery')}>
- Cancel
+                                    Cancel
                                 </Button>
                                 <Button type="submit" disabled={processing}>
                                     {processing ? 'Updating...' : 'Update Item'}

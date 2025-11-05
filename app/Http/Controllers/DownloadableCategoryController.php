@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\DownloadableCategory;
-use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
-
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DownloadableCategoryController extends Controller
 {
@@ -15,15 +13,17 @@ class DownloadableCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $downloadables = DownloadableCategory::withCount('downloadables')
+        $search = $request->input('search');
+
+        $categories = DownloadableCategory::withCount('downloadables') // Fixed variable name
             ->when($request->input('search'), function ($query, $search) {
                 $query->where('category_name', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('Admin/DownloadableCategories/index', [
-            'downloadables' => $downloadables,
+        return Inertia::render('Admin/DownloadableCategories/Index', [ // Capital Index
+            'downloadables' => $categories, // Keep as 'downloadables' for frontend consistency
             'filters' => $request->only('search'),
         ]);
     }
@@ -33,9 +33,7 @@ class DownloadableCategoryController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/DownloadableCategories/create');
-
-
+        return Inertia::render('Admin/DownloadableCategories/Create'); // Capital Create
     }
 
     /**
@@ -60,7 +58,7 @@ class DownloadableCategoryController extends Controller
     public function show(string $id)
     {
         $category = DownloadableCategory::with('downloadables')->findOrFail($id);
-        return Inertia::render('Admin/DownloadableCategories/show', [
+        return Inertia::render('Admin/DownloadableCategories/Show', [ // Capital Show
             'category' => $category
         ]);
     }
@@ -71,7 +69,7 @@ class DownloadableCategoryController extends Controller
     public function edit(string $id)
     {
         $category = DownloadableCategory::findOrFail($id);
-        return Inertia::render('Admin/DownloadableCategories/edit', [
+        return Inertia::render('Admin/DownloadableCategories/Edit', [ // Capital Edit
             'category' => $category
         ]);
     }
@@ -92,9 +90,6 @@ class DownloadableCategoryController extends Controller
 
         return redirect()->route('Admin.DownloadableCategories.index')
             ->with('success', 'Downloadable Category updated successfully.');
-
-
-
     }
 
     /**
@@ -109,7 +104,10 @@ class DownloadableCategoryController extends Controller
             ->with('success', 'Downloadable Category deleted successfully.');
     }
 
-      public function bulkDestroy(Request $request)
+    /**
+     * Bulk delete categories
+     */
+    public function bulkDestroy(Request $request)
     {
         $request->validate([
             'ids' => 'required|array',
@@ -119,18 +117,9 @@ class DownloadableCategoryController extends Controller
         $categories = DownloadableCategory::whereIn('id', $request->input('ids'))->get();
 
         foreach ($categories as $category) {
-            // No files associated directly with DownloadableCategory,
-            // but if there were, this is where you'd delete them.
-            // For now, just delete the category.
             $category->delete();
         }
 
-         return redirect()->back()->with('swal', [
-            'title' => 'Deleted!',
-            'text' => 'Selected downloadable categories have been deleted.',
-            'icon' => 'success',
-            'timer' => 3000,
-        ]);
-
+        return redirect()->back()->with('success', 'Selected downloadable categories have been deleted.');
     }
 }

@@ -7,65 +7,65 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
+interface Downloadable {
+    id: number;
+    title: string;
+    description: string | null;
+    file_path: string;
+    downloadable_category_id: number;
+}
+
 interface Category {
     id: number;
     category_name: string;
 }
 
 interface Props {
+    downloadable: Downloadable;
     categories: Category[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Downloadables',
-        href: '/Downloadables',
-    },
-    {
-        title: 'Create New Downloadable',
-        href: '/Downloadables/create',
-    },
-];
+export default function EditDownloadable({ downloadable, categories }: Props) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Downloadables',
+            href: '/Downloadables',
+        },
+        {
+            title: 'Edit Downloadable',
+            href: `/Downloadables/${downloadable.id}/edit`,
+        },
+    ];
 
-export default function CreateDownloadable({ categories }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
-        downloadable_category_id: '',
-        title: '',
-        description: '',
+    const { data, setData, put, processing, errors } = useForm({
+        _method: 'PUT',
+        downloadable_category_id: downloadable.downloadable_category_id,
+        title: downloadable.title,
+        description: downloadable.description || '',
         file: null as File | null,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post('/Downloadables', {
+        put(`/Downloadables/${downloadable.id}`, {
             forceFormData: true,
-            onSuccess: () => {
-                // Reset form after successful submission
-                setData({
-                    downloadable_category_id: '',
-                    title: '',
-                    description: '',
-                    file: null,
-                });
-            },
         });
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create New Downloadable" />
+            <Head title="Edit Downloadable" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
                     <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-                        <h2 className="mb-6 text-2xl font-bold">Create New Downloadable</h2>
+                        <h2 className="mb-6 text-2xl font-bold">Edit Downloadable</h2>
                         <form onSubmit={submit} className="space-y-4">
                             {/* Category Selection */}
                             <div>
                                 <Label htmlFor="downloadable_category_id">Category *</Label>
                                 <Select
-                                    value={data.downloadable_category_id}
-                                    onValueChange={(value) => setData('downloadable_category_id', value)}
-                                    required
+                                    value={data.downloadable_category_id.toString()}
+                                    onValueChange={(value) => setData('downloadable_category_id', parseInt(value, 10))}
                                 >
                                     <SelectTrigger className="mt-1">
                                         <SelectValue placeholder="Select a category" />
@@ -114,16 +114,34 @@ export default function CreateDownloadable({ categories }: Props) {
                                 {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
                             </div>
 
+                            {/* Current File Display */}
+                            <div>
+                                <Label>Current File</Label>
+                                <div className="mt-1">
+                                    {downloadable.file_path ? (
+                                        <a
+                                            href={`/storage/${downloadable.file_path}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2 text-blue-600 hover:underline"
+                                        >
+                                            📄 View Current File
+                                        </a>
+                                    ) : (
+                                        <span className="text-muted-foreground italic">No file uploaded</span>
+                                    )}
+                                </div>
+                            </div>
+
                             {/* File Upload */}
                             <div>
-                                <Label htmlFor="file">File *</Label>
+                                <Label htmlFor="file">New File (Leave blank to keep current file)</Label>
                                 <Input
                                     id="file"
                                     name="file"
                                     type="file"
                                     onChange={(e) => setData('file', e.target.files?.[0] || null)}
                                     className="mt-1"
-                                    required
                                     accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
                                 />
                                 {errors.file && <p className="mt-1 text-sm text-red-600">{errors.file}</p>}
@@ -146,7 +164,7 @@ export default function CreateDownloadable({ categories }: Props) {
                                     disabled={processing}
                                     className="min-w-24"
                                 >
-                                    {processing ? 'Creating...' : 'Create Downloadable'}
+                                    {processing ? 'Updating...' : 'Update Downloadable'}
                                 </Button>
                             </div>
                         </form>

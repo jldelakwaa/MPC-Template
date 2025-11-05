@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown,Download, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, Download, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -88,7 +88,6 @@ const columns: ColumnDef<Downloadable>[] = [
             <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
         ),
     },
-
     {
         accessorKey: 'title',
         header: ({ column }) => (
@@ -114,7 +113,12 @@ const columns: ColumnDef<Downloadable>[] = [
         accessorKey: 'file_path',
         header: 'File',
         cell: ({ row }) => (
-            <a href={`/storage/${row.original.file_path}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline">
+            <a
+                href={`/storage/${row.original.file_path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-blue-600 hover:underline"
+            >
                 <Download className="h-4 w-4" />
                 Download
             </a>
@@ -147,7 +151,7 @@ const columns: ColumnDef<Downloadable>[] = [
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete this item?')) {
+                                if (confirm('Are you sure you want to delete this downloadable?')) {
                                     router.delete(`/Downloadables/${downloadable.id}`, {
                                         preserveScroll: true,
                                     });
@@ -200,6 +204,26 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                         />
                         <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
+                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                        <Button
+                            variant="destructive"
+                            className="ml-2"
+                            onClick={() => {
+                                if (confirm('Are you sure you want to delete selected downloadables?')) {
+                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as Downloadable).id);
+                                    router.delete('/Downloadables/bulk-delete', {
+                                        data: { ids: selectedIds },
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            table.toggleAllPageRowsSelected(false);
+                                        },
+                                    });
+                                }
+                            }}
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete Selected ({table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                    )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
