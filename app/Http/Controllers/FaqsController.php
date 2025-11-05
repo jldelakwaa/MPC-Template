@@ -39,8 +39,8 @@ class FaqsController extends Controller
     {
         $validated = $request->validate([
             'faqs_categoryid' => 'required|exists:faqs_category,id',
-            'question' => 'required|string|max:255',
-            'answer' => 'required|string',
+            'question' => 'nullable|string|max:255',
+            'answer' => 'nullable|string',
         ]);
 
         FaQC::create($validated);
@@ -79,8 +79,8 @@ class FaqsController extends Controller
 
         $validated = $request->validate([
             'faqs_categoryid' => 'required|exists:faqs_category,id',
-            'question' => 'required|string|max:255',
-            'answer' => 'required|string',
+            'question' => 'nullable|string|max:255',
+            'answer' => 'nullable|string',
         ]);
 
         $faq->update($validated);

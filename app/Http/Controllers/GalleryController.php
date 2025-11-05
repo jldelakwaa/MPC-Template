@@ -52,11 +52,11 @@ class GalleryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
             'gallery_category_id' => 'required|exists:gallery_categories,id',
-            'year' => 'required|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'year' => 'nullable|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -98,10 +98,10 @@ class GalleryController extends Controller
         $gallery = Gallery::findOrFail($id);
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
             'category_id' => 'required|exists:gallery_categories,id',
-            'year' => 'required|date',
+            'year' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 

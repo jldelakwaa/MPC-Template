@@ -57,10 +57,10 @@ class OfficerController extends Controller
     {
         $validated = $request->validate([
             'officer_category_id' => 'nullable|exists:officer_categories,id',
-            'name' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'birthday' => 'required|date',
-            'yearservice' => 'required|date',
+            'name' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date',
+            'yearservice' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -104,10 +104,10 @@ class OfficerController extends Controller
 
         $validated = $request->validate([
             'officer_category_id' => 'nullable|exists:officer_categories,id',
-            'name' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'birthday' => 'required|date',
-            'yearservice' => 'required|date',
+            'name' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date',
+            'yearservice' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 

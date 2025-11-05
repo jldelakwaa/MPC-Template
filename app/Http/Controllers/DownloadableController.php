@@ -50,9 +50,9 @@ class DownloadableController extends Controller
     {
         $validated = $request->validate([
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
-            'title' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
+            'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
         ]);
 
         if ($request->hasFile('file')) {
@@ -98,7 +98,7 @@ class DownloadableController extends Controller
 
         $validated = $request->validate([
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
-            'title' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240', // Max 10MB
         ]);
