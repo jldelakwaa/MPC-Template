@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OfficerStoreRequest;
+use App\Http\Requests\OfficerUpdateRequest;
 use App\Models\Officer;
 use App\Models\OfficerCategory;
 use Illuminate\Http\Request;
@@ -53,16 +55,9 @@ class OfficerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OfficerStoreRequest $request)
     {
-        $validated = $request->validate([
-            'officer_category_id' => 'nullable|exists:officer_categories,id',
-            'name' => 'nullable|string|max:255',
-            'position' => 'nullable|string|max:255',
-            'birthday' => 'nullable|date',
-            'yearservice' => 'nullable|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('officers', 'public');
@@ -98,18 +93,11 @@ class OfficerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(OfficerUpdateRequest $request, string $id)
     {
         $officer = Officer::findOrFail($id);
 
-        $validated = $request->validate([
-            'officer_category_id' => 'nullable|exists:officer_categories,id',
-            'name' => 'nullable|string|max:255',
-            'position' => 'nullable|string|max:255',
-            'birthday' => 'nullable|date',
-            'yearservice' => 'nullable|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         // Handle image update
         if ($request->hasFile('image')) {

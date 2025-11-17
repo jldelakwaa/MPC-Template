@@ -7,6 +7,9 @@ use App\Http\Controllers\FaqsController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GalleryCategoryController;
 use App\Http\Controllers\FaqsCategoryController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsDetailController;
+use App\Http\Controllers\HomePageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -92,24 +95,30 @@ Route::delete('/DownloadableCategories/bulk-delete', [DownloadableCategoryContro
     Route::get('/News', [NewsController::class, 'index'])->name('Admin.News.index');
     Route::get('/News/create', [NewsController::class, 'create'])->name('Admin.News.create');
     Route::post('/News', [NewsController::class, 'store'])->name('Admin.News.store');
+    Route::get('/News/{id}', [NewsController::class, 'show'])->name('Admin.News.show');
     Route::get('/News/{id}/edit', [NewsController::class, 'edit'])->name('Admin.News.edit');
     Route::put('/News/{id}', [NewsController::class, 'update'])->name('Admin.News.update');
+    Route::delete('/News/bulk-delete', [NewsController::class, 'bulkDestroy'])->name('Admin.News.bulkDestroy');
     Route::delete('/News/{id}', [NewsController::class, 'destroy'])->name('Admin.News.destroy');
 
-    // News Details
-    Route::get('/NewsDetails', [NewsDetailsController::class, 'index'])->name('Admin.NewsDetails.index');
-    Route::get('/NewsDetails/create', [NewsDetailsController::class, 'create'])->name('Admin.NewsDetails.create');
-    Route::post('/NewsDetails', [NewsDetailsController::class, 'store'])->name('Admin.NewsDetails.store');
-    Route::get('/NewsDetails/{id}/edit', [NewsDetailsController::class, 'edit'])->name('Admin.NewsDetails.edit');
-    Route::put('/NewsDetails/{id}', [NewsDetailsController::class, 'update'])->name('Admin.NewsDetails.update');
-    Route::delete('/NewsDetails/{id}', [NewsDetailsController::class, 'destroy'])->name('Admin.NewsDetails.destroy');
+    // News Details (Nested under News)
+    Route::get('/News/{newsId}/details', [NewsDetailController::class, 'index'])->name('Admin.NewsDetails.index');
+    Route::get('/News/{newsId}/details/create', [NewsDetailController::class, 'create'])->name('Admin.NewsDetails.create');
+    Route::post('/News/{newsId}/details', [NewsDetailController::class, 'store'])->name('Admin.NewsDetails.store');
+    Route::get('/News/{newsId}/details/{id}', [NewsDetailController::class, 'show'])->name('Admin.NewsDetails.show');
+    Route::get('/News/{newsId}/details/{id}/edit', [NewsDetailController::class, 'edit'])->name('Admin.NewsDetails.edit');
+    Route::put('/News/{newsId}/details/{id}', [NewsDetailController::class, 'update'])->name('Admin.NewsDetails.update');
+    Route::delete('/News/{newsId}/details/bulk-delete', [NewsDetailController::class, 'bulkDestroy'])->name('Admin.NewsDetails.bulkDestroy');
+    Route::delete('/News/{newsId}/details/{id}', [NewsDetailController::class, 'destroy'])->name('Admin.NewsDetails.destroy');
 
     // Home Page
     Route::get('/HomePage', [HomePageController::class, 'index'])->name('Admin.HomePage.index');
     Route::get('/HomePage/create', [HomePageController::class, 'create'])->name('Admin.HomePage.create');
     Route::post('/HomePage', [HomePageController::class, 'store'])->name('Admin.HomePage.store');
+    Route::get('/HomePage/{id}', [HomePageController::class, 'show'])->name('Admin.HomePage.show');
     Route::get('/HomePage/{id}/edit', [HomePageController::class, 'edit'])->name('Admin.HomePage.edit');
     Route::put('/HomePage/{id}', [HomePageController::class, 'update'])->name('Admin.HomePage.update');
+    Route::delete('/HomePage/bulk-delete', [HomePageController::class, 'bulkDestroy'])->name('Admin.HomePage.bulkDestroy');
     Route::delete('/HomePage/{id}', [HomePageController::class, 'destroy'])->name('Admin.HomePage.destroy');
 
 });

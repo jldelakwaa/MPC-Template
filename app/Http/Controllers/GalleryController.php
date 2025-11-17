@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GalleryStoreRequest;
+use App\Http\Requests\GalleryUpdateRequest;
 use App\Models\Gallery;
 use App\Models\GalleryCategory;
 use Inertia\Inertia;
@@ -48,15 +50,9 @@ class GalleryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(GalleryStoreRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string|max:255',
-            'gallery_category_id' => 'required|exists:gallery_categories,id',
-            'year' => 'nullable|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10048',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('gallery', 'public');
@@ -92,17 +88,11 @@ class GalleryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(GalleryUpdateRequest $request, string $id)
     {
         $gallery = Gallery::findOrFail($id);
 
-        $validated = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string|max:255',
-            'gallery_category_id' => 'required|exists:gallery_categories,id', // Fixed: consistent field name
-            'year' => 'nullable|date',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validated = $request->validated();
 
         // Handle image update
         if ($request->hasFile('image')) {

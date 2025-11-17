@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GalleryCategoryStoreRequest;
+use App\Http\Requests\GalleryCategoryUpdateRequest;
 use App\Models\GalleryCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,11 +45,9 @@ class GalleryCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(GalleryCategoryStoreRequest $request)
     {
-        $validated = $request->validate([
-            'category_name' => 'required|string|max:255|unique:gallery_categories,category_name',
-        ]);
+        $validated = $request->validated();
 
         GalleryCategory::create($validated);
 
@@ -80,13 +80,11 @@ class GalleryCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(GalleryCategoryUpdateRequest $request, string $id)
     {
         $category = GalleryCategory::findOrFail($id);
 
-        $validated = $request->validate([
-            'category_name' => 'required|string|max:255|unique:gallery_categories,category_name,' . $id,
-        ]);
+        $validated = $request->validated();
 
         $category->update($validated);
 

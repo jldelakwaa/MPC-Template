@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DownloadableStoreRequest;
+use App\Http\Requests\DownloadableUpdateRequest;
 use App\Models\Downloadable;
 use App\Models\DownloadableCategory;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +23,6 @@ class DownloadableController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%")
                       ->orWhereHas('category', function ($q) use ($search) {
                           $q->where('category_name', 'like', "%{$search}%");
                       });
@@ -51,14 +52,9 @@ class DownloadableController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DownloadableStoreRequest $request)
     {
-        $validated = $request->validate([
-            'downloadable_category_id' => 'required|exists:downloadable_categories,id',
-            'title' => 'required|string|max:255', // Changed to required
-            'description' => 'nullable|string',
-            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar|max:10240', // Added required and more file types
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('file')) {
             $validated['file_path'] = $request->file('file')->store('downloadables', 'public');
@@ -97,26 +93,28 @@ class DownloadableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(DownloadableUpdateRequest $request, string $id)
     {
         $downloadable = Downloadable::findOrFail($id);
 
-        $validated = $request->validate([
-            'downloadable_category_id' => 'required|exists:downloadable_categories,id',
-            'title' => 'required|string|max:255', // Changed to required
-            'description' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar|max:10240', // Made optional for updates
-        ]);
+        $validated = $request->validated();
 
+        // Handle file update
         if ($request->hasFile('file')) {
             // Delete old file if exists
             if ($downloadable->file_path) {
                 Storage::disk('public')->delete($downloadable->file_path);
             }
             $validated['file_path'] = $request->file('file')->store('downloadables', 'public');
+        } elseif ($request->boolean('remove_file')) {
+            // If remove_file is true, delete the file and set it to null
+            if ($downloadable->file_path) {
+                Storage::disk('public')->delete($downloadable->file_path);
+            }
+            $validated['file_path'] = null;
         } else {
-            // Keep the existing file path if no new file is uploaded
-            $validated['file_path'] = $downloadable->file_path;
+            // If no new file is uploaded and remove_file is false, keep the existing file
+            unset($validated['file_path']);
         }
 
         $downloadable->update($validated);

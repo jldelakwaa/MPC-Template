@@ -14,6 +14,22 @@ class Downloadable extends Model
         'downloadable_category_id',
     ];
 
+    /**
+     * Accessor for file_path (maps to downloadable_form)
+     */
+    public function getFilePathAttribute()
+    {
+        return $this->downloadable_form;
+    }
+
+    /**
+     * Mutator for file_path (maps to downloadable_form)
+     */
+    public function setFilePathAttribute($value)
+    {
+        $this->attributes['downloadable_form'] = $value;
+    }
+
     public function category()
     {
         return $this->belongsTo(DownloadableCategory::class, 'downloadable_category_id');

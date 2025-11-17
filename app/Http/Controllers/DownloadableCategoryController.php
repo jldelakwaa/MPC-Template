@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DownloadableCategoryStoreRequest;
+use App\Http\Requests\DownloadableCategoryUpdateRequest;
 use App\Models\DownloadableCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,12 +41,9 @@ class DownloadableCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DownloadableCategoryStoreRequest $request)
     {
-        $validated = $request->validate([
-            'category_name' => 'required|string|max:255|unique:downloadable_categories,category_name',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         DownloadableCategory::create($validated);
 
@@ -77,14 +76,11 @@ class DownloadableCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(DownloadableCategoryUpdateRequest $request, string $id)
     {
         $category = DownloadableCategory::findOrFail($id);
 
-        $validated = $request->validate([
-            'category_name' => 'required|string|max:255|unique:downloadable_categories,category_name,' . $id,
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $category->update($validated);
 

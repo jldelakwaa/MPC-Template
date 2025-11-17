@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HomepageImages extends Model
+class HomePageImage extends Model
 {
     protected $table = 'homepage_images';
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OfficerCategoryStoreRequest;
+use App\Http\Requests\OfficerCategoryUpdateRequest;
 use App\Models\OfficerCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,12 +32,9 @@ class OfficerCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OfficerCategoryStoreRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:officer_categories,name',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         OfficerCategory::create($validated);
 
@@ -68,14 +67,11 @@ class OfficerCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(OfficerCategoryUpdateRequest $request, string $id)
     {
         $category = OfficerCategory::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:officer_categories,name,' . $id,
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $category->update($validated);
 
