@@ -2,7 +2,7 @@
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -227,17 +227,29 @@ export default function FaqIndex({ faqs, filters ={} }: FaqIndexProps) {
     const selectedRows = table.getFilteredSelectedRowModel().rows;
     const hasSelection = selectedRows.length > 0;
 
-    const handleSearch = (searchValue: string) => {
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
         router.get(
             '/Faq',
-            { search: searchValue || undefined },
+            { search: value || undefined },
             {
                 preserveState: true,
                 preserveScroll: true,
                 only: ['faqs', 'filters'],
             }
         );
-    };
+    }, []);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) {
+                handleSearch(searchValue);
+            }
+        }, 300); // 300ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
 
     return (
         <AppLayout breadcrumbs={BREADCRUMBS}>
@@ -266,8 +278,8 @@ export default function FaqIndex({ faqs, filters ={} }: FaqIndexProps) {
                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search FAQs..."
-                            defaultValue={filters.search}
-                            onChange={(e) => handleSearch(e.target.value)}
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
                             className="pl-8"
                         />
                     </div>

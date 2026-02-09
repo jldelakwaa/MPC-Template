@@ -19,7 +19,25 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('Admin/dashboard');
+        return Inertia::render('Admin/dashboard', [
+            'stats' => [
+                'officerCategories' => \App\Models\OfficerCategory::count(),
+                'officers' => \App\Models\Officer::count(),
+                'faqs' => \App\Models\FaQC::count(),
+                'faqCategories' => \App\Models\FaQCategory::count(),
+                'downloadables' => \App\Models\Downloadable::count(),
+                'downloadableCategories' => \App\Models\DownloadableCategory::count(),
+                'galleries' => \App\Models\Gallery::count(),
+                'galleryCategories' => \App\Models\GalleryCategory::count(),
+                'news' => \App\Models\NewsUpdate::count(),
+                'homePageImages' => \App\Models\HomePageImage::count(),
+            ],
+            'recent' => [
+                'news' => \App\Models\NewsUpdate::latest()->take(3)->get(['id', 'title', 'created_at']),
+                'officers' => \App\Models\Officer::latest()->take(3)->get(['id', 'name', 'created_at']),
+                'faqs' => \App\Models\FaQC::latest()->take(3)->get(['id', 'question', 'created_at']),
+            ]
+        ]);
     })->name('dashboard');
 
     // Officer Categories

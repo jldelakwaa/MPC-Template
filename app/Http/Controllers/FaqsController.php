@@ -14,9 +14,9 @@ class FaqsController extends Controller
       /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $search = request()->input('search');
+        $search = $request->input('search');
 
         $faqs = FaQC::with('faqCategory')
             ->when($search, function ($query, $search) {
@@ -25,7 +25,8 @@ class FaqsController extends Controller
             })
             ->latest()->paginate(5);
         return Inertia::render('Admin/Faq/index', [
-            'faqs' => $faqs
+            'faqs' => $faqs,
+            'filters' => $request->only(['search'])
         ]);
     }
 

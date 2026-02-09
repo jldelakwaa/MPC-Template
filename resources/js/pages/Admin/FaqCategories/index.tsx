@@ -2,6 +2,7 @@
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -119,6 +120,30 @@ export default function Index({ categories = [], filters = {} }: Props) {
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get(
+            '/FaqCategories',
+            { search: value || undefined },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                only: ['categories', 'filters'],
+            }
+        );
+    }, []);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) {
+                handleSearch(searchValue);
+            }
+        }, 300); // 300ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="FAQ Categories" />
@@ -140,10 +165,8 @@ export default function Index({ categories = [], filters = {} }: Props) {
                     <div className="relative w-full max-w-sm">
                         <Input
                             placeholder="Search categories..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get('/FaqCategories', { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
                             className="max-w-sm"
                         />
                         <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />

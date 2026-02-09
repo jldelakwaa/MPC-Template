@@ -13,10 +13,22 @@ class FaqsCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = FaQCategory::withCount('faqs')->latest()->get();
-        return Inertia::render('Admin/FaqCategories/index', ['categories' => $categories]);
+        $search = $request->input('search');
+
+        $categories = FaQCategory::withCount('faqs')
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->get();
+
+        return Inertia::render('Admin/FaqCategories/index', [
+            'categories' => $categories,
+            'filters' => $request->only(['search'])
+        ]);
     }
 
     /**
