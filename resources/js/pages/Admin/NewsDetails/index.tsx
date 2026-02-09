@@ -1,7 +1,5 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowBigLeftDash, ArrowUpDown, ChevronDown, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, FileText, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -30,49 +28,44 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 
-interface GalleryCategory {
+interface NewsDetail {
     id: number;
-    category_name: string;
-    galleries_count: number;
+    news_update_id: number;
+    content: string;
+    pdf_files: string | null;
     created_at: string;
     updated_at: string;
 }
 
-interface PaginatedGalleryCategory {
-    data: GalleryCategory[];
-    links: {
-        url: string | null;
-        label: string;
-        active: boolean;
-    }[];
-    first_page_url: string | null;
-    last_page_url: string | null;
+interface NewsUpdate {
+    id: number;
+    title: string;
+}
+
+interface PaginatorLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedNewsDetails {
+    data: NewsDetail[];
+    links: PaginatorLink[];
     next_page_url: string | null;
     prev_page_url: string | null;
     current_page: number;
     last_page: number;
-    from: number;
-    to: number;
-    total: number;
-    per_page: number;
 }
 
 interface Props {
-    categories: PaginatedGalleryCategory;
+    newsDetails: PaginatedNewsDetails;
+    news: NewsUpdate;
     filters: {
         search?: string;
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Gallery Categories',
-        href: '/GalleryCategory',
-    },
-];
-
-// 🧱 Column Definitions
-const columns: ColumnDef<GalleryCategory>[] = [
+const columns: ColumnDef<NewsDetail>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -87,33 +80,37 @@ const columns: ColumnDef<GalleryCategory>[] = [
         ),
     },
     {
-        accessorKey: 'category_name',
+        accessorKey: 'content',
         header: ({ column }) => (
             <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                Category Name
+                Content
                 <ArrowUpDown />
             </Button>
         ),
+        cell: ({ row }) => <div className="max-w-md truncate">{row.original.content}</div>,
     },
     {
-        accessorKey: 'galleries_count',
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                Gallery Items
-                <ArrowUpDown />
-            </Button>
-        ),
-        cell: ({ row }) => (
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                {row.original.galleries_count}
-            </span>
-        ),
+        accessorKey: 'pdf_files',
+        header: 'PDF File',
+        cell: ({ row }) =>
+            row.original.pdf_files ? (
+                <a
+                    href={`/storage/${row.original.pdf_files}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-blue-600 hover:underline"
+                >
+                    <FileText className="mr-1 h-4 w-4" /> View PDF
+                </a>
+            ) : (
+                <span className="text-muted-foreground italic">No PDF</span>
+            ),
     },
     {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-            const category = row.original;
+            const detail = row.original;
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -124,15 +121,15 @@ const columns: ColumnDef<GalleryCategory>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                            <Link href={`/GalleryCategory/${category.id}/edit`}>
+                            <Link href={`/News/${detail.news_update_id}/details/${detail.id}/edit`}>
                                 <Pencil className="mr-2 h-4 w-4" /> Edit
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete this category? This will remove the category from all galleries.')) {
-                                    router.delete(`/GalleryCategory/${category.id}`, {
+                                if (confirm('Are you sure you want to delete this detail?')) {
+                                    router.delete(`/News/${detail.news_update_id}/details/${detail.id}`, {
                                         preserveScroll: true,
                                     });
                                 }
@@ -147,37 +144,33 @@ const columns: ColumnDef<GalleryCategory>[] = [
     },
 ];
 
-// 🧮 Main Page Component
-export default function GalleryCategoryIndex({ categories, filters = {} }: Props) {
-    // Ensure categories has default values
-    const defaultCategories = {
-        data: [],
-        links: [],
-        next_page_url: null,
-        prev_page_url: null,
-        current_page: 1,
-        last_page: 1,
-    };
-    categories = categories || defaultCategories;
+export default function NewsDetailsIndex({ newsDetails, news, filters }: Props) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'News & Updates',
+            href: '/News',
+        },
+        {
+            title: news.title,
+            href: `/News/${news.id}/details`,
+        },
+    ];
+
     const table = useReactTable({
-        data: categories.data ?? [],
+        data: newsDetails.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Gallery Categories" />
+            <Head title={`News Details - ${news.title}`} />
             <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/Gallery">
-                        <Button variant="outline">
-                            <ArrowBigLeftDash /> Back to Gallery
-                        </Button>
-                    </Link>
-                    <Link href="/GalleryCategory/create">
+                <div className="mb-4 flex justify-between">
+                    <h1 className="text-2xl font-bold">{news.title} - Details</h1>
+                    <Link href={`/News/${news.id}/details/create`}>
                         <Button>
-                            <Plus /> Create Category
+                            <Plus /> Add Detail
                         </Button>
                     </Link>
                 </div>
@@ -185,10 +178,10 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                 <div className="flex items-center py-4">
                     <div className="relative w-full max-w-sm">
                         <Input
-                            placeholder="Search categories..."
+                            placeholder="Search details..."
                             defaultValue={filters.search}
                             onChange={(e) => {
-                                router.get('/GalleryCategory', { search: e.target.value }, { preserveState: true, preserveScroll: true });
+                                router.get(`/News/${news.id}/details`, { search: e.target.value }, { preserveState: true, preserveScroll: true });
                             }}
                             className="max-w-sm"
                         />
@@ -199,9 +192,9 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                             variant="destructive"
                             className="ml-2"
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete selected categories? This will remove categories from all galleries.')) {
-                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as GalleryCategory).id);
-                                    router.delete('/GalleryCategory/bulk-delete', {
+                                if (confirm('Are you sure you want to delete selected details?')) {
+                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id);
+                                    router.delete(`/News/${news.id}/details/bulk-delete`, {
                                         data: { ids: selectedIds },
                                         preserveScroll: true,
                                         onSuccess: () => {
@@ -250,7 +243,7 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                             ))}
                         </TableHeader>
                         <TableBody>
-                            {categories.data && categories.data.length > 0 ? (
+                            {newsDetails.data.length ? (
                                 table.getRowModel().rows.map((row) => (
                                     <TableRow key={row.id}>
                                         {row.getVisibleCells().map((cell) => (
@@ -261,7 +254,7 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No categories found.
+                                        No details found for this news.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -269,10 +262,9 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                     </Table>
                 </div>
 
-                {/* Laravel Pagination */}
                 <Pagination className="mt-4">
                     <PaginationContent>
-                        {categories.links.map((link, i) => {
+                        {newsDetails.links.map((link, i) => {
                             if (link.url === null) {
                                 return (
                                     <PaginationItem key={i}>

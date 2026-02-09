@@ -1,7 +1,5 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowBigLeftDash, ArrowUpDown, ChevronDown, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, ExternalLink, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -30,35 +28,34 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 
-interface GalleryCategory {
+interface HomePageImage {
     id: number;
-    category_name: string;
-    galleries_count: number;
+    title: string;
+    image: string | null;
+    content: string;
+    button_link: string | null;
+    button_text: string | null;
     created_at: string;
     updated_at: string;
 }
 
-interface PaginatedGalleryCategory {
-    data: GalleryCategory[];
-    links: {
-        url: string | null;
-        label: string;
-        active: boolean;
-    }[];
-    first_page_url: string | null;
-    last_page_url: string | null;
+interface PaginatorLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedHomePageImages {
+    data: HomePageImage[];
+    links: PaginatorLink[];
     next_page_url: string | null;
     prev_page_url: string | null;
     current_page: number;
     last_page: number;
-    from: number;
-    to: number;
-    total: number;
-    per_page: number;
 }
 
 interface Props {
-    categories: PaginatedGalleryCategory;
+    homePageImages: PaginatedHomePageImages;
     filters: {
         search?: string;
     };
@@ -66,13 +63,12 @@ interface Props {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Gallery Categories',
-        href: '/GalleryCategory',
+        title: 'HomePage Images',
+        href: '/HomePage',
     },
 ];
 
-// 🧱 Column Definitions
-const columns: ColumnDef<GalleryCategory>[] = [
+const columns: ColumnDef<HomePageImage>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -87,33 +83,60 @@ const columns: ColumnDef<GalleryCategory>[] = [
         ),
     },
     {
-        accessorKey: 'category_name',
+        accessorKey: 'image',
+        header: 'Image',
+        cell: ({ row }) =>
+            row.original.image ? (
+                <img src={`/storage/${row.original.image}`} alt={row.original.title} className="h-16 w-24 rounded object-cover" />
+            ) : (
+                <div className="flex h-16 w-24 items-center justify-center rounded bg-gray-200">
+                    <span className="text-xs text-gray-500">No Image</span>
+                </div>
+            ),
+    },
+    {
+        accessorKey: 'title',
         header: ({ column }) => (
             <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                Category Name
+                Title
                 <ArrowUpDown />
             </Button>
         ),
     },
     {
-        accessorKey: 'galleries_count',
-        header: ({ column }) => (
-            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                Gallery Items
-                <ArrowUpDown />
-            </Button>
-        ),
-        cell: ({ row }) => (
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                {row.original.galleries_count}
-            </span>
-        ),
+        accessorKey: 'content',
+        header: 'Content',
+        cell: ({ row }) => <div className="max-w-md truncate">{row.original.content}</div>,
+    },
+    {
+        accessorKey: 'button_text',
+        header: 'Button',
+        cell: ({ row }) =>
+            row.original.button_text ? (
+                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                    {row.original.button_text}
+                </span>
+            ) : (
+                <span className="text-muted-foreground italic">No button</span>
+            ),
+    },
+    {
+        accessorKey: 'button_link',
+        header: 'Link',
+        cell: ({ row }) =>
+            row.original.button_link ? (
+                <a href={row.original.button_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-blue-600 hover:underline">
+                    <ExternalLink className="h-4 w-4" />
+                </a>
+            ) : (
+                <span className="text-muted-foreground">-</span>
+            ),
     },
     {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-            const category = row.original;
+            const item = row.original;
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -124,15 +147,15 @@ const columns: ColumnDef<GalleryCategory>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                            <Link href={`/GalleryCategory/${category.id}/edit`}>
+                            <Link href={`/HomePage/${item.id}/edit`}>
                                 <Pencil className="mr-2 h-4 w-4" /> Edit
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete this category? This will remove the category from all galleries.')) {
-                                    router.delete(`/GalleryCategory/${category.id}`, {
+                                if (confirm('Are you sure you want to delete this homepage image?')) {
+                                    router.delete(`/HomePage/${item.id}`, {
                                         preserveScroll: true,
                                     });
                                 }
@@ -147,37 +170,21 @@ const columns: ColumnDef<GalleryCategory>[] = [
     },
 ];
 
-// 🧮 Main Page Component
-export default function GalleryCategoryIndex({ categories, filters = {} }: Props) {
-    // Ensure categories has default values
-    const defaultCategories = {
-        data: [],
-        links: [],
-        next_page_url: null,
-        prev_page_url: null,
-        current_page: 1,
-        last_page: 1,
-    };
-    categories = categories || defaultCategories;
+export default function HomePageIndex({ homePageImages, filters }: Props) {
     const table = useReactTable({
-        data: categories.data ?? [],
+        data: homePageImages.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Gallery Categories" />
+            <Head title="HomePage Images" />
             <div className="m-4">
                 <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/Gallery">
-                        <Button variant="outline">
-                            <ArrowBigLeftDash /> Back to Gallery
-                        </Button>
-                    </Link>
-                    <Link href="/GalleryCategory/create">
+                    <Link href="/HomePage/create">
                         <Button>
-                            <Plus /> Create Category
+                            <Plus /> Create Homepage Image
                         </Button>
                     </Link>
                 </div>
@@ -185,10 +192,10 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                 <div className="flex items-center py-4">
                     <div className="relative w-full max-w-sm">
                         <Input
-                            placeholder="Search categories..."
+                            placeholder="Search homepage images..."
                             defaultValue={filters.search}
                             onChange={(e) => {
-                                router.get('/GalleryCategory', { search: e.target.value }, { preserveState: true, preserveScroll: true });
+                                router.get('/HomePage', { search: e.target.value }, { preserveState: true, preserveScroll: true });
                             }}
                             className="max-w-sm"
                         />
@@ -199,9 +206,9 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                             variant="destructive"
                             className="ml-2"
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete selected categories? This will remove categories from all galleries.')) {
-                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as GalleryCategory).id);
-                                    router.delete('/GalleryCategory/bulk-delete', {
+                                if (confirm('Are you sure you want to delete selected images?')) {
+                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id);
+                                    router.delete('/HomePage/bulk-delete', {
                                         data: { ids: selectedIds },
                                         preserveScroll: true,
                                         onSuccess: () => {
@@ -250,7 +257,7 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                             ))}
                         </TableHeader>
                         <TableBody>
-                            {categories.data && categories.data.length > 0 ? (
+                            {homePageImages.data.length ? (
                                 table.getRowModel().rows.map((row) => (
                                     <TableRow key={row.id}>
                                         {row.getVisibleCells().map((cell) => (
@@ -261,7 +268,7 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No categories found.
+                                        No homepage images found.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -269,10 +276,9 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                     </Table>
                 </div>
 
-                {/* Laravel Pagination */}
                 <Pagination className="mt-4">
                     <PaginationContent>
-                        {categories.links.map((link, i) => {
+                        {homePageImages.links.map((link, i) => {
                             if (link.url === null) {
                                 return (
                                     <PaginationItem key={i}>
