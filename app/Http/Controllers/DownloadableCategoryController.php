@@ -24,7 +24,7 @@ class DownloadableCategoryController extends Controller
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('Admin/DownloadableCategories/Index', [ // Capital Index
+        return Inertia::render('Admin/DownloadableCategories/index', [ // Capital index
             'downloadables' => $categories, // Keep as 'downloadables' for frontend consistency
             'filters' => $request->only('search'),
         ]);
@@ -35,7 +35,7 @@ class DownloadableCategoryController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/DownloadableCategories/Create'); // Capital Create
+        return Inertia::render('Admin/DownloadableCategories/create'); // Capital Create
     }
 
     /**
@@ -57,7 +57,7 @@ class DownloadableCategoryController extends Controller
     public function show(string $id)
     {
         $category = DownloadableCategory::with('downloadables')->findOrFail($id);
-        return Inertia::render('Admin/DownloadableCategories/Show', [ // Capital Show
+        return Inertia::render('Admin/DownloadableCategories/show', [ // Capital Show
             'category' => $category
         ]);
     }
@@ -68,7 +68,7 @@ class DownloadableCategoryController extends Controller
     public function edit(string $id)
     {
         $category = DownloadableCategory::findOrFail($id);
-        return Inertia::render('Admin/DownloadableCategories/Edit', [ // Capital Edit
+        return Inertia::render('Admin/DownloadableCategories/edit', [ // Capital edit
             'category' => $category
         ]);
     }

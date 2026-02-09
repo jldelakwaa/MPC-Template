@@ -32,7 +32,7 @@ class DownloadableController extends Controller
             ->paginate(10) // Increased from 5 to 10
             ->withQueryString();
 
-        return Inertia::render('Admin/Downloadables/Index', [ // Capital Index
+        return Inertia::render('Admin/Downloadables/index', [ // Capital Index
             'downloadables' => $downloadables,
             'filters' => $request->only(['search'])
         ]);
@@ -44,7 +44,7 @@ class DownloadableController extends Controller
     public function create()
     {
         $categories = DownloadableCategory::all();
-        return Inertia::render('Admin/Downloadables/Create', [ // Capital Create
+        return Inertia::render('Admin/Downloadables/create', [ // Capital Create
             'categories' => $categories
         ]);
     }
@@ -72,7 +72,7 @@ class DownloadableController extends Controller
     public function show(string $id)
     {
         $downloadable = Downloadable::with('category')->findOrFail($id);
-        return Inertia::render('Admin/Downloadables/Show', [ // Capital Show
+        return Inertia::render('Admin/Downloadables/show', [ // Capital Show
             'downloadable' => $downloadable
         ]);
     }
@@ -84,7 +84,7 @@ class DownloadableController extends Controller
     {
         $downloadable = Downloadable::findOrFail($id);
         $categories = DownloadableCategory::all();
-        return Inertia::render('Admin/Downloadables/Edit', [ // Capital Edit
+        return Inertia::render('Admin/Downloadables/edit', [ // Capital Edit
             'downloadable' => $downloadable,
             'categories' => $categories
         ]);

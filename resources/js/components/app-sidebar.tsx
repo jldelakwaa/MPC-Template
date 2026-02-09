@@ -15,12 +15,12 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'HomePage Images',
-        href: '/HomePageImages',
+        href: '/HomePage',
         icon: House,
     },
     {
         title: 'News and Updates',
-        href: '/NewsAndUpdates',
+        href: '/News',
         icon: Newspaper,
     },
     {

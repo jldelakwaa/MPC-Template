@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowBigLeftDash, ArrowUpDown, ChevronDown, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -172,7 +172,7 @@ export default function GalleryCategoryIndex({ categories, filters = {} }: Props
                 <div className="mb-4 flex justify-end gap-2">
                     <Link href="/Gallery">
                         <Button variant="outline">
-                            <ArrowBigLeftDash /> Back to Gallery
+                            <FolderKanban /> Manage Galleries
                         </Button>
                     </Link>
                     <Link href="/GalleryCategory/create">

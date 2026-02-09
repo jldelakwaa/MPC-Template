@@ -30,7 +30,7 @@ class GalleryController extends Controller
             ->paginate(10) // Increased from 5 to 10 for better UX
             ->withQueryString();
 
-        return Inertia::render('Admin/Gallery/Index', [ // Fixed: Capital Index
+        return Inertia::render('Admin/Gallery/index', [ // Fixed: Capital Index
             'gallery' => $gallery,
             'filters' => $request->only(['search'])
         ]);
@@ -42,7 +42,7 @@ class GalleryController extends Controller
     public function create()
     {
         $categories = GalleryCategory::all();
-        return Inertia::render('Admin/Gallery/Create', [ // Fixed: Capital Create
+        return Inertia::render('Admin/Gallery/create', [ // Fixed: Capital Create
             'categories' => $categories
         ]);
     }
@@ -79,7 +79,7 @@ class GalleryController extends Controller
     {
         $gallery = Gallery::findOrFail($id);
         $categories = GalleryCategory::all();
-        return Inertia::render('Admin/Gallery/Edit', [ // Fixed: Capital Edit
+        return Inertia::render('Admin/Gallery/edit', [ // Fixed: Capital Edit
             'gallery' => $gallery,
             'categories' => $categories
         ]);

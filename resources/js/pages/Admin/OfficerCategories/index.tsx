@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowBigLeftDash, ArrowUpDown, ChevronDown, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -168,7 +168,7 @@ export default function OfficerCategoryIndex({ categories, filters }: Props) {
                 <div className="mb-4 flex justify-end gap-2">
                     <Link href="/Officers">
                         <Button variant="outline">
-                            <ArrowBigLeftDash /> Back to Officers
+                            <FolderKanban /> Manage Officers
                         </Button>
                     </Link>
                     <Link href="/OfficerCategories/create">

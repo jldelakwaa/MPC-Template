@@ -26,7 +26,7 @@ class GalleryCategoryController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Admin/GalleryCategory/Index', [
+        return Inertia::render('Admin/GalleryCategory/index', [
             'categories' => $categories,
             'filters' => [
                 'search' => $search,
@@ -39,7 +39,7 @@ class GalleryCategoryController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Admin/GalleryCategory/Create');
+        return Inertia::render('Admin/GalleryCategory/create');
     }
 
     /**
@@ -61,7 +61,7 @@ class GalleryCategoryController extends Controller
     public function show(string $id): Response
     {
         $category = GalleryCategory::with('galleries')->findOrFail($id);
-        return Inertia::render('Admin/GalleryCategory/Show', [
+        return Inertia::render('Admin/GalleryCategory/show', [
             'category' => $category
         ]);
     }
@@ -72,7 +72,7 @@ class GalleryCategoryController extends Controller
     public function edit(string $id): Response
     {
         $category = GalleryCategory::findOrFail($id);
-        return Inertia::render('Admin/GalleryCategory/Edit', [
+        return Inertia::render('Admin/GalleryCategory/edit', [
             'category' => $category
         ]);
     }

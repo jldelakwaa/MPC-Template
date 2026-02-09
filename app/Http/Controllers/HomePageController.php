@@ -30,7 +30,7 @@ class HomePageController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Admin/HomePage/Index', [
+        return Inertia::render('Admin/HomePage/index', [
             'homePageImages' => $homePageImages,
             'filters' => $request->only(['search'])
         ]);
@@ -41,7 +41,7 @@ class HomePageController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/HomePage/Create');
+        return Inertia::render('Admin/HomePage/create');
     }
 
     /**
@@ -68,7 +68,7 @@ class HomePageController extends Controller
     {
         $homePageImage = HomePageImage::findOrFail($id);
 
-        return Inertia::render('Admin/HomePage/Show', [
+        return Inertia::render('Admin/HomePage/show', [
             'homePageImage' => $homePageImage
         ]);
     }
@@ -80,7 +80,7 @@ class HomePageController extends Controller
     {
         $homePageImage = HomePageImage::findOrFail($id);
 
-        return Inertia::render('Admin/HomePage/Edit', [
+        return Inertia::render('Admin/HomePage/edit', [
             'homePageImage' => $homePageImage
         ]);
     }

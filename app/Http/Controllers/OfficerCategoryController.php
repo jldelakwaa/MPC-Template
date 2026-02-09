@@ -13,11 +13,21 @@ class OfficerCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = OfficerCategory::withCount('officers')->latest()->get();
+        $search = $request->input('search');
+
+        $categories = OfficerCategory::withCount('officers')
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Admin/OfficerCategories/index', [
-            'categories' => $categories
+            'categories' => $categories,
+            'filters' => $request->only(['search'])
         ]);
     }
 

@@ -28,7 +28,7 @@ class NewsDetailController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Admin/NewsDetails/Index', [
+        return Inertia::render('Admin/NewsDetails/index', [
             'newsDetails' => $newsDetails,
             'news' => $news,
             'filters' => $request->only(['search'])
@@ -42,7 +42,7 @@ class NewsDetailController extends Controller
     {
         $news = NewsUpdate::findOrFail($newsId);
 
-        return Inertia::render('Admin/NewsDetails/Create', [
+        return Inertia::render('Admin/NewsDetails/create', [
             'news' => $news
         ]);
     }
@@ -76,7 +76,7 @@ class NewsDetailController extends Controller
             ->findOrFail($id);
         $news = NewsUpdate::findOrFail($newsId);
 
-        return Inertia::render('Admin/NewsDetails/Show', [
+        return Inertia::render('Admin/NewsDetails/show', [
             'newsDetail' => $newsDetail,
             'news' => $news
         ]);
@@ -91,7 +91,7 @@ class NewsDetailController extends Controller
             ->findOrFail($id);
         $news = NewsUpdate::findOrFail($newsId);
 
-        return Inertia::render('Admin/NewsDetails/Edit', [
+        return Inertia::render('Admin/NewsDetails/edit', [
             'newsDetail' => $newsDetail,
             'news' => $news
         ]);
