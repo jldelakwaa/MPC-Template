@@ -28,12 +28,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+import type { SharedData } from '@/types';
 
 interface Downloadable {
     id: number;
     title: string;
-    description: string | null;
     file_path: string;
     downloadable_category_id: number;
     category?: {
@@ -151,11 +152,21 @@ const columns: ColumnDef<Downloadable>[] = [
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete this downloadable?')) {
-                                    router.delete(`/Downloadables/${downloadable.id}`, {
-                                        preserveScroll: true,
-                                    });
-                                }
+                                window.Swal.fire({
+                                    title: 'Are you sure?',
+                                    text: 'You won\'t be able to revert this!',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Yes, delete it!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        router.delete(`/Downloadables/${downloadable.id}`, {
+                                            preserveScroll: true,
+                                        });
+                                    }
+                                });
                             }}
                         >
                             <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
@@ -169,6 +180,14 @@ const columns: ColumnDef<Downloadable>[] = [
 
 // 🧮 Main Page Component
 export default function DownloadablesIndex({ downloadables, filters }: Props) {
+    const { flash } = usePage<SharedData>().props;
+
+    useEffect(() => {
+        if (flash?.success) {
+            window.Swal.fire('Success', flash.success, 'success');
+        }
+    }, [flash?.success]);
+
     const table = useReactTable({
         data: downloadables.data,
         columns,
@@ -209,16 +228,26 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                             variant="destructive"
                             className="ml-2"
                             onClick={() => {
-                                if (confirm('Are you sure you want to delete selected downloadables?')) {
-                                    const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as Downloadable).id);
-                                    router.delete('/Downloadables/bulk-delete', {
-                                        data: { ids: selectedIds },
-                                        preserveScroll: true,
-                                        onSuccess: () => {
-                                            table.toggleAllPageRowsSelected(false);
-                                        },
-                                    });
-                                }
+                                window.Swal.fire({
+                                    title: 'Are you sure?',
+                                    text: 'You won\'t be able to revert this!',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Yes, delete selected!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as Downloadable).id);
+                                        router.delete('/Downloadables/bulk-delete', {
+                                            data: { ids: selectedIds },
+                                            preserveScroll: true,
+                                            onSuccess: () => {
+                                                table.toggleAllPageRowsSelected(false);
+                                            },
+                                        });
+                                    }
+                                });
                             }}
                         >
                             <Trash2 className="mr-2 h-4 w-4" /> Delete Selected ({table.getFilteredSelectedRowModel().rows.length})

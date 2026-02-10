@@ -14,6 +14,8 @@ class Downloadable extends Model
         'downloadable_category_id',
     ];
 
+    protected $appends = ['file_path'];
+
     /**
      * Accessor for file_path (maps to downloadable_form)
      */

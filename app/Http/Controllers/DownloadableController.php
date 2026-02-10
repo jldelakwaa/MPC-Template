@@ -57,8 +57,11 @@ class DownloadableController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('file')) {
-            $validated['file_path'] = $request->file('file')->store('downloadables', 'public');
+            $validated['downloadable_form'] = $request->file('file')->store('downloadables', 'public');
         }
+
+        // Remove the 'file' key as it's not needed in the database
+        unset($validated['file']);
 
         Downloadable::create($validated);
 
@@ -102,20 +105,20 @@ class DownloadableController extends Controller
         // Handle file update
         if ($request->hasFile('file')) {
             // Delete old file if exists
-            if ($downloadable->file_path) {
-                Storage::disk('public')->delete($downloadable->file_path);
+            if ($downloadable->downloadable_form) {
+                Storage::disk('public')->delete($downloadable->downloadable_form);
             }
-            $validated['file_path'] = $request->file('file')->store('downloadables', 'public');
+            $validated['downloadable_form'] = $request->file('file')->store('downloadables', 'public');
         } elseif ($request->boolean('remove_file')) {
             // If remove_file is true, delete the file and set it to null
-            if ($downloadable->file_path) {
-                Storage::disk('public')->delete($downloadable->file_path);
+            if ($downloadable->downloadable_form) {
+                Storage::disk('public')->delete($downloadable->downloadable_form);
             }
-            $validated['file_path'] = null;
-        } else {
-            // If no new file is uploaded and remove_file is false, keep the existing file
-            unset($validated['file_path']);
+            $validated['downloadable_form'] = null;
         }
+
+        // Remove the 'file' key as it's not needed in the database
+        unset($validated['file']);
 
         $downloadable->update($validated);
 
@@ -129,8 +132,8 @@ class DownloadableController extends Controller
     public function destroy(string $id)
     {
         $downloadable = Downloadable::findOrFail($id);
-        if ($downloadable->file_path) {
-            Storage::disk('public')->delete($downloadable->file_path);
+        if ($downloadable->downloadable_form) {
+            Storage::disk('public')->delete($downloadable->downloadable_form);
         }
         $downloadable->delete();
 
@@ -148,8 +151,8 @@ class DownloadableController extends Controller
         $downloadables = Downloadable::whereIn('id', $request->input('ids'))->get();
 
         foreach ($downloadables as $downloadable) {
-            if ($downloadable->file_path) {
-                Storage::disk('public')->delete($downloadable->file_path);
+            if ($downloadable->downloadable_form) {
+                Storage::disk('public')->delete($downloadable->downloadable_form);
             }
             $downloadable->delete();
         }

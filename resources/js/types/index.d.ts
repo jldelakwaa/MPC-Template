@@ -27,6 +27,10 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    flash?: {
+        success?: string;
+        error?: string;
+    };
     [key: string]: unknown;
 }
 
@@ -39,4 +43,12 @@ export interface User {
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
+}
+
+declare global {
+    interface Window {
+        Swal: {
+            fire: (...args: any[]) => Promise<{ isConfirmed: boolean }>;
+        };
+    }
 }

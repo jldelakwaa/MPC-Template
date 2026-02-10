@@ -25,7 +25,6 @@ class DownloadableUpdateRequest extends FormRequest
             'downloadable_category_id' => 'required|exists:downloadable_categories,id',
             'title' => 'required|string|max:255',
             'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar|max:10240',
-            'remove_file' => 'nullable|boolean',
         ];
     }
 

@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState } from 'react';
 
 interface Category {
     id: number;
@@ -28,23 +28,48 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CreateDownloadable({ categories }: Props) {
+    const [selectedFileName, setSelectedFileName] = useState<string>('');
+    const [fileSizeError, setFileSizeError] = useState<string>('');
+
     const { data, setData, post, processing, errors } = useForm({
-        downloadable_category_id: '',
+        downloadable_category_id: 0,
         title: '',
-        description: '',
         file: null as File | null,
     });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setFileSizeError('');
+
+        if (file) {
+            // Check file size (10MB = 10 * 1024 * 1024 bytes)
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                setFileSizeError('File size must be less than 10MB');
+                setSelectedFileName('');
+                setData('file', null);
+                e.target.value = '';
+                return;
+            }
+
+            setSelectedFileName(file.name);
+            setData('file', file);
+        } else {
+            setSelectedFileName('');
+            setData('file', null);
+        }
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post('/Downloadables', {
             forceFormData: true,
             onSuccess: () => {
+                window.Swal.fire('Success', 'Downloadable created successfully.', 'success');
                 // Reset form after successful submission
                 setData({
                     downloadable_category_id: '',
                     title: '',
-                    description: '',
                     file: null,
                 });
             },
@@ -59,12 +84,11 @@ export default function CreateDownloadable({ categories }: Props) {
                     <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
                         <h2 className="mb-6 text-2xl font-bold">Create New Downloadable</h2>
                         <form onSubmit={submit} className="space-y-4">
-                            {/* Category Selection */}
                             <div>
                                 <Label htmlFor="downloadable_category_id">Category *</Label>
                                 <Select
-                                    value={data.downloadable_category_id}
-                                    onValueChange={(value) => setData('downloadable_category_id', value)}
+                                    value={data.downloadable_category_id ? data.downloadable_category_id.toString() : ''}
+                                    onValueChange={(value) => setData('downloadable_category_id', parseInt(value, 10))}
                                     required
                                 >
                                     <SelectTrigger className="mt-1">
@@ -99,21 +123,6 @@ export default function CreateDownloadable({ categories }: Props) {
                                 {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
                             </div>
 
-                            {/* Description Textarea */}
-                            <div>
-                                <Label htmlFor="description">Description</Label>
-                                <textarea
-                                    id="description"
-                                    placeholder="Enter the description"
-                                    name="description"
-                                    value={data.description}
-                                    onChange={(e) => setData('description', e.target.value)}
-                                    className="mt-1 flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    rows={4}
-                                />
-                                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
-                            </div>
-
                             {/* File Upload */}
                             <div>
                                 <Label htmlFor="file">File *</Label>
@@ -121,12 +130,42 @@ export default function CreateDownloadable({ categories }: Props) {
                                     id="file"
                                     name="file"
                                     type="file"
-                                    onChange={(e) => setData('file', e.target.files?.[0] || null)}
+                                    onChange={handleFileChange}
                                     className="mt-1"
                                     required
                                     accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
                                 />
+
+                                {/* Selected File Preview */}
+                                {selectedFileName && (
+                                    <div className="mt-2 flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-2">
+                                        <span className="text-green-600">📄</span>
+                                        <span className="text-sm font-medium text-green-700">
+                                            Selected: {selectedFileName}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setSelectedFileName('');
+                                                setData('file', null);
+                                                const fileInput = document.getElementById('file') as HTMLInputElement;
+                                                if (fileInput) fileInput.value = '';
+                                            }}
+                                            className="ml-auto text-green-600 hover:text-green-800"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* File Size Error */}
+                                {fileSizeError && (
+                                    <p className="mt-1 text-sm text-red-600">{fileSizeError}</p>
+                                )}
+
+                                {/* Backend Errors */}
                                 {errors.file && <p className="mt-1 text-sm text-red-600">{errors.file}</p>}
+
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, ZIP, RAR. Max size: 10MB.
                                 </p>
