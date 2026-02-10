@@ -31,11 +31,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'galleryCategories' => \App\Models\GalleryCategory::count(),
                 'news' => \App\Models\NewsUpdate::count(),
                 'homePageImages' => \App\Models\HomePageImage::count(),
-            ],
-            'recent' => [
-                'news' => \App\Models\NewsUpdate::latest()->take(3)->get(['id', 'title', 'created_at']),
-                'officers' => \App\Models\Officer::latest()->take(3)->get(['id', 'name', 'created_at']),
-                'faqs' => \App\Models\FaQC::latest()->take(3)->get(['id', 'question', 'created_at']),
             ]
         ]);
     })->name('dashboard');

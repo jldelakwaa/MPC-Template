@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import {
     Users,
     HelpCircle,
@@ -12,8 +12,6 @@ import {
     Newspaper,
     Home,
     TrendingUp,
-    Clock,
-    ArrowRight
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -36,26 +34,13 @@ interface Stats {
     homePageImages: number;
 }
 
-interface RecentItem {
-    id: number;
-    title?: string;
-    name?: string;
-    question?: string;
-    created_at: string;
-}
 
-interface Recent {
-    news: RecentItem[];
-    officers: RecentItem[];
-    faqs: RecentItem[];
-}
 
 interface Props {
     stats: Stats;
-    recent: Recent;
 }
 
-export default function Dashboard({ stats, recent }: Props) {
+export default function Dashboard({ stats, }: Props) {
     const totalItems = stats.officers + stats.faqs + stats.downloadables + stats.galleries + stats.news + stats.homePageImages;
 
     const cards = [
@@ -103,14 +88,6 @@ export default function Dashboard({ stats, recent }: Props) {
         },
     ];
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -149,115 +126,6 @@ export default function Dashboard({ stats, recent }: Props) {
                     })}
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <Card className="md:col-span-2">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Clock className="h-5 w-5" />
-                                Recent Activity
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div>
-                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                    <Newspaper className="h-4 w-4 text-red-600" />
-                                    Latest News
-                                </h4>
-                                <div className="space-y-2">
-                                    {recent.news.length > 0 ? (
-                                        recent.news.map((item) => (
-                                            <div key={item.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                                                <span className="text-sm truncate flex-1">{item.title}</span>
-                                                <div className="flex items-center gap-2 ml-2">
-                                                    <span className="text-xs text-muted-foreground">{formatDate(item.created_at)}</span>
-                                                    <Link href={`/News/${item.id}`} className="text-primary hover:underline">
-                                                        <ArrowRight className="h-3 w-3" />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground">No recent news</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                    <Users className="h-4 w-4 text-blue-600" />
-                                    Latest Officers
-                                </h4>
-                                <div className="space-y-2">
-                                    {recent.officers.length > 0 ? (
-                                        recent.officers.map((item) => (
-                                            <div key={item.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                                                <span className="text-sm truncate flex-1">{item.name}</span>
-                                                <div className="flex items-center gap-2 ml-2">
-                                                    <span className="text-xs text-muted-foreground">{formatDate(item.created_at)}</span>
-                                                    <Link href={`/Officers/${item.id}/edit`} className="text-primary hover:underline">
-                                                        <ArrowRight className="h-3 w-3" />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground">No recent officers</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                                    <HelpCircle className="h-4 w-4 text-green-600" />
-                                    Latest FAQs
-                                </h4>
-                                <div className="space-y-2">
-                                    {recent.faqs.length > 0 ? (
-                                        recent.faqs.map((item) => (
-                                            <div key={item.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                                                <span className="text-sm truncate flex-1">{item.question}</span>
-                                                <div className="flex items-center gap-2 ml-2">
-                                                    <span className="text-xs text-muted-foreground">{formatDate(item.created_at)}</span>
-                                                    <Link href={`/Faq/${item.id}/edit`} className="text-primary hover:underline">
-                                                        <ArrowRight className="h-3 w-3" />
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground">No recent FAQs</p>
-                                    )}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Quick Stats</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="text-center">
-                                <div className="text-4xl font-bold text-primary mb-1">{totalItems}</div>
-                                <p className="text-sm text-muted-foreground">Total Content Items</p>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span>Categories</span>
-                                    <span className="font-medium">{stats.officerCategories + stats.faqCategories + stats.downloadableCategories + stats.galleryCategories}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span>Content Types</span>
-                                    <span className="font-medium">6</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span>Growth</span>
-                                    <Badge variant="outline" className="text-green-600">+12%</Badge>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
             </div>
         </AppLayout>
     );
