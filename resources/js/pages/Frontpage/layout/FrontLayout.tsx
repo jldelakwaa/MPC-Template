@@ -46,6 +46,9 @@ const navItems = [
     { label: 'Downloads', href: '/downloads' },
 ];
 
+const appName = import.meta.env.VITE_APP_NAME || 'Cooperative';
+const appLogo = import.meta.env.VITE_APP_LOGO_URL || '';
+
 export default function FrontLayout({ title, children }: FrontLayoutProps) {
     const { auth } = usePage<SharedData>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -106,12 +109,16 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 py-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl font-bold text-[#F0F4F8]">
-                                C
-                            </div>
+                            {appLogo ? (
+                                <img src={appLogo} alt={appName} className="h-12 w-12 rounded-full object-cover" />
+                            ) : (
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl font-bold text-[#F0F4F8]">
+                                    {appName.charAt(0)}
+                                </div>
+                            )}
                             <div className="hidden sm:block">
                                 <h1 className="text-lg font-bold leading-tight text-[#F0F4F8]">
-                                    Cooperative
+                                    {appName}
                                 </h1>
                                 <p className="text-[10px] leading-tight tracking-wider text-[#F0F4F8]/70">
                                     Multi-Purpose Cooperative
@@ -236,10 +243,14 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                             {/* About */}
                             <div>
                                 <div className="mb-4 flex items-center gap-3">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg font-bold">
-                                        C
-                                    </div>
-                                    <h3 className="text-lg font-bold">Cooperative</h3>
+                                    {appLogo ? (
+                                        <img src={appLogo} alt={appName} className="h-10 w-10 rounded-full object-cover" />
+                                    ) : (
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg font-bold">
+                                            {appName.charAt(0)}
+                                        </div>
+                                    )}
+                                    <h3 className="text-lg font-bold">{appName}</h3>
                                 </div>
                                 <p className="text-sm leading-relaxed text-[#F0F4F8]/70">
                                     Multi-Purpose Cooperative — empowering
