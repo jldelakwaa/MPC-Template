@@ -7,7 +7,7 @@ export const commercialBuildingData: ServiceDetailPageData = {
     },
     content: {
         imagePosition: 'right',
-        heading: 'Bohol Provincial Employees (BOPE)',
+        heading: 'Commercial Building Services',
         locations: [
             {
                 name: 'Main Branch',
@@ -16,10 +16,10 @@ export const commercialBuildingData: ServiceDetailPageData = {
             },
         ],
         facebook: {
-            url: 'https://www.facebook.com/bopempcoop/',
-            display: 'facebook.com/bopempcoop',
+            url: 'https://www.facebook.com/yourcoop',
+            display: 'facebook.com/yourcoop',
         },
-        email: 'bopempc@gmail.com',
+        email: 'leasing@example.com',
         description: 'Looking for a place to stay in the heart of Tagbilaran City?\nBook your stay with us',
         image: {
             src: '/images/commercial-building-bope.png',

@@ -65,7 +65,7 @@ export const homeServices: HomeService[] = [
     },
     {
         icon: Droplets,
-        title: 'Aqua BOPE',
+        title: 'Water Refilling',
         description: 'Quality purified drinking water refilling station for members and the public.',
         href: '/services/aqua-bope',
     },

@@ -7,9 +7,9 @@ export interface Milestone {
 export const milestones: Milestone[] = [
     {
         year: '1999',
-        title: 'BOPE MPC Founded',
+        title: 'Cooperative Founded',
         description:
-            'BOPE MPC was organized and registered with the Cooperative Development Authority by the then Fifteen (15) Board of Directors of the Bohol Provincial Employees League (BOPEL). It was the brain child of the League — its business arm and its aid in the financial crisis of Provincial Government Employees towards economic success and financial freedom.',
+            'The cooperative was organized and registered with the Cooperative Development Authority by founding board members committed to financial inclusion and community growth.',
     },
     {
         year: '2000',
@@ -27,19 +27,19 @@ export const milestones: Milestone[] = [
         year: '2016',
         title: 'Commercial Building Completed',
         description:
-            'Construction of the BOPE-MPC commercial building was completed. Rentable office spaces were opened for leasing with the BOPE-MPC office at the ground floor.',
+            'Construction of the cooperative commercial building was completed. Rentable office spaces were opened for leasing with the cooperative office at the ground floor.',
     },
     {
         year: '2017',
         title: 'SAFARI Inn Opened',
         description:
-            'Grand opening and launching of SAFARI — a Safe, Affordable, Friendly and Relaxing Inn of BOPE-MPC.',
+            'Grand opening and launching of SAFARI, a Safe, Affordable, Friendly and Relaxing Inn of the cooperative.',
     },
     {
         year: '2019',
-        title: 'AQUA BOPE Aqua BOPE Opened',
+        title: 'Water Refilling Service Opened',
         description:
-            'To guarantee consistent supply of safe and quality purified drinking water to the members of the Cooperative and the public in general, AQUA BOPE water refilling station was created and opened for business.',
+            'To guarantee a consistent supply of safe and quality purified drinking water to members and the public, the cooperative water refilling station was launched.',
     },
     {
         year: '2020',

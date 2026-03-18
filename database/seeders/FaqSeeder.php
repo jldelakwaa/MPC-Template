@@ -15,16 +15,16 @@ class FaqSeeder extends Seeder
         $faqs = [
             [
                 'faqs_categoryid' => $membership?->id,
-                'question' => 'Who can be a member of BOPE-MPC?',
+                'question' => 'Who can be a member of the cooperative?',
                 'answer' => implode("\n", [
                     'Qualification for Regular Membership is open to all employees who:',
-                    '- Is a permanent employee of the Provincial Government of Bohol',
+                    '- Is gainfully employed or has a stable source of income',
                     '- Has attended and completed the Pre-Membership Education Seminar',
                     '- Must have good moral standing in the Community',
                     '- Subscribed at least a minimum of Two Hundred (200) shares equivalent to Two Hundred Thousand pesos (P200,000.00) payable within ten (10) years',
                     '- Paid the required minimum share capital of Fifty (50) shares amounting to Fifty Thousand (P50,000.00) Pesos, provided said amount shall be fully paid within 1 year, he/she is not considered as full-fledged member',
-                    '- Permanent employees of Bohol Provincial Employees Multi-Purpose Cooperative',
-                    '- Separated employees from government service but who are regular BOPE-MPC members and have not terminated their membership',
+                    '- Employees of the cooperative who meet internal requirements',
+                    '- Former employees or retirees who maintain active cooperative membership',
                     '',
                     'Qualification for Associate Membership is open to any individual who:',
                     '- Is gainfully employed who does not qualify as a regular member',

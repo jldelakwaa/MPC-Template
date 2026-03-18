@@ -28,10 +28,9 @@ export default function History() {
                 <div className="mx-auto max-w-4xl px-4 text-center">
                     <Building2 className="mx-auto mb-4 text-foreground" size={40} />
                     <p className="text-lg leading-relaxed text-foreground">
-                        BOPE MPC was organized in <strong>1999</strong> by the Board of Directors of the
-                        Bohol Provincial Employees League (BOPEL) — the cooperative's business arm
-                        dedicated to the financial welfare and economic success of Bohol
-                        Provincial Government Employees.
+                        Our cooperative was organized in <strong>1999</strong> by founding community
+                        leaders dedicated to financial welfare, inclusive growth, and long-term
+                        member success.
                     </p>
                 </div>
             </section>

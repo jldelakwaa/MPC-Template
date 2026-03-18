@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $shouldSeedAdmin = app()->environment(['local', 'testing']) || (bool) env('SEED_DEFAULT_ADMIN', false);
 
         if ($shouldSeedAdmin) {
-            $adminEmail = env('DEFAULT_ADMIN_EMAIL', 'root@gmail.com');
+            $adminEmail = env('DEFAULT_ADMIN_EMAIL', 'admin@example.com');
             $adminPassword = env('DEFAULT_ADMIN_PASSWORD');
             $generatedPassword = $adminPassword ?: Str::password(16);
 
