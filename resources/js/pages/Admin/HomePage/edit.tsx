@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
@@ -51,7 +52,9 @@ export default function Edit({ homePageImage }: Props) {
             <Head title="Edit HomePage Image" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Edit HomePage Image</h2>
                         <form onSubmit={submit} className="space-y-4" encType="multipart/form-data">
                             <div>
@@ -65,7 +68,7 @@ export default function Edit({ homePageImage }: Props) {
                                     onChange={(e) => setData('title', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                                {errors.title && <p className="mt-1 text-sm text-destructive">{errors.title}</p>}
                             </div>
 
                             <div>
@@ -79,9 +82,9 @@ export default function Edit({ homePageImage }: Props) {
                                     id="image"
                                     name="image"
                                     type="file"
-                                    accept="image/*"
+                                    accept=".jpg,.jpeg,.png,.gif,.webp"
                                     onChange={(e) => setData('image', e.target.files?.[0] || null)}
-                                    className="mt-1"
+                                    className="mt-1 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-brand-navy-dark"
                                 />
                                 {homePageImage.image && (
                                     <div className="mt-2">
@@ -96,21 +99,20 @@ export default function Edit({ homePageImage }: Props) {
                                         </label>
                                     </div>
                                 )}
-                                {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                                {errors.image && <p className="mt-1 text-sm text-destructive">{errors.image}</p>}
                             </div>
 
                             <div>
                                 <Label htmlFor="content">Content</Label>
-                                <textarea
+                                <Textarea
                                     id="content"
                                     placeholder="Enter content"
                                     name="content"
                                     value={data.content}
                                     onChange={(e) => setData('content', e.target.value)}
-                                    className="mt-1 flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                                    rows={4}
+                                    className="mt-1 min-h-[120px]"
                                 />
-                                {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content}</p>}
+                                {errors.content && <p className="mt-1 text-sm text-destructive">{errors.content}</p>}
                             </div>
 
                             <div>
@@ -124,7 +126,7 @@ export default function Edit({ homePageImage }: Props) {
                                     onChange={(e) => setData('button_text', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.button_text && <p className="mt-1 text-sm text-red-600">{errors.button_text}</p>}
+                                {errors.button_text && <p className="mt-1 text-sm text-destructive">{errors.button_text}</p>}
                             </div>
 
                             <div>
@@ -138,7 +140,7 @@ export default function Edit({ homePageImage }: Props) {
                                     onChange={(e) => setData('button_link', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.button_link && <p className="mt-1 text-sm text-red-600">{errors.button_link}</p>}
+                                {errors.button_link && <p className="mt-1 text-sm text-destructive">{errors.button_link}</p>}
                             </div>
 
                             <div className="flex justify-end gap-2">
@@ -150,6 +152,7 @@ export default function Edit({ homePageImage }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

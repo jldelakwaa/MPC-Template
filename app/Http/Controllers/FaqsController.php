@@ -111,7 +111,7 @@ class FaqsController extends Controller
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'integer|exists:faqs_c,id',
+            'ids.*' => 'integer|exists:faqs,id',
         ]);
 
         FaQC::whereIn('id', $request->input('ids'))->delete();

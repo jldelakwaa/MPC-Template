@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
+import { appConfig } from '@/config/env';
 import { useState } from 'react';
 import {
     Menu,
@@ -8,48 +9,62 @@ import {
     Phone,
     Mail,
     MapPin,
-    Facebook,
     Clock,
 } from 'lucide-react';
+import NavLink from '@/components/NavLink';
+import { defaultNavItems, defaultContactInfo, defaultFooterConfig } from '../_data/layout.data';
+
+export interface NavChildItem {
+    label: string;
+    href: string;
+}
+
+export interface FrontNavItem {
+    label: string;
+    href: string;
+    children?: NavChildItem[];
+}
+
+export interface FooterLinkItem {
+    label: string;
+    href: string;
+}
+
+export interface SiteContactInfo {
+    phone: string;
+    email: string;
+    address: string;
+    hours: string;
+    facebookUrl?: string;
+}
+
+export interface FooterConfig {
+    tagline?: string;
+    quickLinks?: FooterLinkItem[];
+    serviceLinks?: FooterLinkItem[];
+}
 
 interface FrontLayoutProps {
     title: string;
     children: React.ReactNode;
+    navItems?: FrontNavItem[];
+    contactInfo?: Partial<SiteContactInfo>;
+    footerConfig?: FooterConfig;
 }
 
-const navItems = [
-    { label: 'Home', href: '/' },
-    {
-        label: 'About Us',
-        href: '#',
-        children: [
-            { label: 'Gallery', href: '/about/gallery' },
-            { label: 'History', href: '/about/history' },
-            { label: 'Membership', href: '/about/membership' },
-        ],
-    },
-    {
-        label: 'Products & Services',
-        href: '#',
-        children: [
-            { label: 'Loans', href: '/services/loans' },
-            { label: 'Savings', href: '/services/savings' },
-            { label: 'Hospitality', href: '/services/safari' },
-            { label: 'Water Station', href: '/services/aqua-bope' },
-            { label: 'Commercial Building', href: '/services/commercial-building' },
-        ],
-    },
-    { label: 'FAQs', href: '/faqs' },
-    { label: 'News & Updates', href: '/news' },
-    { label: 'Officers', href: '/officers' },
-    { label: 'Contact Us', href: '/contact' },
-    { label: 'Downloads', href: '/downloads' },
-];
+const appName = appConfig.name;
+const appLogo = appConfig.logoUrl;
 
-const appName = import.meta.env.VITE_APP_NAME || 'Cooperative';
-const appLogo = import.meta.env.VITE_APP_LOGO_URL || '';
+export default function FrontLayout({
+    title,
+    children,
+    navItems = defaultNavItems,
+    contactInfo: contactInfoProp,
+    footerConfig: footerConfigProp,
+}: FrontLayoutProps) {
+    const contact: SiteContactInfo = { ...defaultContactInfo, ...contactInfoProp };
+    const footer: Required<FooterConfig> = { ...defaultFooterConfig, ...footerConfigProp };
 
-export default function FrontLayout({ title, children }: FrontLayoutProps) {
     const { auth } = usePage<SharedData>().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -58,44 +73,38 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
 
     return (
         <>
-            <Head title={title}>
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link
-                    href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap"
-                    rel="stylesheet"
-                />
-            </Head>
+            <Head title={title} />
 
-            <div className="flex min-h-screen flex-col" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <div className="flex min-h-screen flex-col">
                 {/* Top Bar */}
-                <div className="bg-[#142D54] text-[#F0F4F8]">
+                <div className="bg-brand-navy-dark text-brand-light">
                     <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between px-4 py-2 text-xs sm:text-sm">
                         <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1">
                                 <Phone size={13} />
-                                (000) 000-0000
+                                {contact.phone}
                             </span>
                             <span className="hidden items-center gap-1 sm:flex">
                                 <Mail size={13} />
-                                info@cooperative.com
+                                {contact.email}
                             </span>
                         </div>
                         <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1">
                                 <Clock size={13} />
-                                Mon-Fri 8AM-5PM
+                                {contact.hours}
                             </span>
                             {auth.user ? (
                                 <Link
                                     href="/dashboard"
-                                    className="rounded bg-[#2E6B6B] px-3 py-1 text-xs font-medium text-white transition hover:bg-[#245858]"
+                                    className="rounded bg-brand-teal px-3 py-1 text-xs font-medium text-white transition hover:bg-brand-teal-dark"
                                 >
                                     Dashboard
                                 </Link>
                             ) : (
                                 <Link
                                     href="/login"
-                                    className="rounded bg-[#4A7AAC] px-3 py-1 text-xs font-medium text-white transition hover:bg-[#3d6a99]"
+                                    className="rounded bg-brand-blue px-3 py-1 text-xs font-medium text-white transition hover:bg-brand-blue-dark"
                                 >
                                     Login
                                 </Link>
@@ -105,22 +114,22 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                 </div>
 
                 {/* Main Header */}
-                <header className="sticky top-0 z-50 bg-[#1B3A6B] shadow-lg">
+                <header className="sticky top-0 z-50 bg-brand-navy shadow-lg">
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 py-3">
                             {appLogo ? (
                                 <img src={appLogo} alt={appName} className="h-12 w-12 rounded-full object-cover" />
                             ) : (
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl font-bold text-[#F0F4F8]">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-card/10 text-xl font-bold text-brand-light">
                                     {appName.charAt(0)}
                                 </div>
                             )}
                             <div className="hidden sm:block">
-                                <h1 className="text-lg font-bold leading-tight text-[#F0F4F8]">
+                                <h1 className="text-lg font-bold leading-tight text-brand-light">
                                     {appName}
                                 </h1>
-                                <p className="text-[10px] leading-tight tracking-wider text-[#F0F4F8]/70">
+                                <p className="text-[10px] leading-tight tracking-wider text-brand-light/70">
                                     Multi-Purpose Cooperative
                                 </p>
                             </div>
@@ -139,31 +148,25 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                                         item.children && setOpenDropdown(null)
                                     }
                                 >
-                                    <Link
+                                    <NavLink
                                         href={item.href}
-                                        className={`flex items-center gap-1 px-3.5 py-5 text-sm font-medium transition-colors ${
-                                            currentPath === item.href
-                                                ? 'bg-[#4A7AAC] text-white'
-                                                : 'text-[#F0F4F8] hover:bg-[#4A7AAC]/60'
-                                        }`}
+                                        current={currentPath === item.href}
+                                        className="justify-center text-brand-light"
                                     >
                                         {item.label}
                                         {item.children && <ChevronDown size={14} />}
-                                    </Link>
+                                    </NavLink>
                                     {item.children && openDropdown === item.label && (
-                                        <div className="absolute left-0 top-full z-50 min-w-[220px] rounded-b-lg border border-[#1B3A6B]/20 bg-white py-1 shadow-xl">
+                                        <div className="absolute left-0 top-full z-50 min-w-[220px] rounded-b-lg border border-brand-navy/20 bg-card py-1 shadow-xl">
                                             {item.children.map((child) => (
-                                                <Link
+                                                <NavLink
                                                     key={child.label}
                                                     href={child.href}
-                                                    className={`block px-5 py-2.5 text-sm transition-colors ${
-                                                        currentPath === child.href
-                                                            ? 'bg-[#2E6B6B]/10 font-semibold text-[#1B3A6B]'
-                                                            : 'text-[#2C2C2C] hover:bg-[#D6D8DC]/50 hover:text-[#1B3A6B]'
-                                                    }`}
+                                                    current={currentPath === child.href}
+                                                    className="text-foreground justify-start px-5 py-2.5"
                                                 >
                                                     {child.label}
-                                                </Link>
+                                                </NavLink>
                                             ))}
                                         </div>
                                     )}
@@ -173,7 +176,7 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
 
                         {/* Mobile Menu Button */}
                         <button
-                            className="rounded-md p-2 text-[#F0F4F8] lg:hidden"
+                            className="rounded-md p-2 text-brand-light lg:hidden"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         >
                             {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
@@ -182,14 +185,14 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
 
                     {/* Mobile Nav */}
                     {mobileMenuOpen && (
-                        <div className="border-t border-[#4A7AAC]/30 bg-[#1B3A6B] lg:hidden">
-                            <nav className="mx-auto max-w-7xl divide-y divide-[#4A7AAC]/20 px-4">
+                        <div className="border-t border-brand-blue/30 bg-brand-navy lg:hidden">
+                            <nav className="mx-auto max-w-7xl divide-y divide-brand-blue/20 px-4">
                                 {navItems.map((item) => (
                                     <div key={item.label}>
                                         {item.children ? (
                                             <>
                                                 <button
-                                                    className="flex w-full items-center justify-between py-3 text-sm font-medium text-[#F0F4F8]"
+                                                    className="flex w-full items-center justify-between py-3 text-sm font-medium text-brand-light"
                                                     onClick={() =>
                                                         setOpenDropdown(
                                                             openDropdown === item.label ? null : item.label,
@@ -208,7 +211,7 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                                                             <Link
                                                                 key={child.label}
                                                                 href={child.href}
-                                                                className="block py-2 text-sm text-[#F0F4F8]/80 hover:text-white"
+                                                                className={`block py-2 text-sm font-medium transition-colors hover:underline ${currentPath === child.href ? 'font-semibold underline' : ''} text-brand-light/80`}
                                                                 onClick={() => setMobileMenuOpen(false)}
                                                             >
                                                                 {child.label}
@@ -220,7 +223,7 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                                         ) : (
                                             <Link
                                                 href={item.href}
-                                                className="block py-3 text-sm font-medium text-[#F0F4F8]"
+                                                className={`block py-3 text-sm font-medium transition-colors hover:underline ${currentPath === item.href ? 'font-semibold underline' : ''} text-brand-light`}
                                                 onClick={() => setMobileMenuOpen(false)}
                                             >
                                                 {item.label}
@@ -237,7 +240,7 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                 <main className="flex-1">{children}</main>
 
                 {/* Footer */}
-                <footer className="bg-[#1B3A6B] text-[#F0F4F8]">
+                <footer className="bg-brand-navy text-brand-light">
                     <div className="mx-auto max-w-7xl px-4 py-12">
                         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                             {/* About */}
@@ -246,132 +249,101 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
                                     {appLogo ? (
                                         <img src={appLogo} alt={appName} className="h-10 w-10 rounded-full object-cover" />
                                     ) : (
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg font-bold">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card/10 text-lg font-bold">
                                             {appName.charAt(0)}
                                         </div>
                                     )}
                                     <h3 className="text-lg font-bold">{appName}</h3>
                                 </div>
-                                <p className="text-sm leading-relaxed text-[#F0F4F8]/70">
-                                    Multi-Purpose Cooperative — empowering
-                                    members towards economic success and
-                                    financial freedom.
+                                <p className="text-sm leading-relaxed text-brand-light/70">
+                                    {footer.tagline}
                                 </p>
                             </div>
 
                             {/* Quick Links */}
                             <div>
-                                <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[#4A7AAC]">
+                                <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-blue">
                                     Quick Links
                                 </h4>
-                                <ul className="space-y-2 text-sm text-[#F0F4F8]/70">
-                                    <li>
-                                        <Link href="/about/history" className="transition hover:text-white">
-                                            Our History
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/about/membership" className="transition hover:text-white">
-                                            Membership
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/services/loans" className="transition hover:text-white">
-                                            Loan Products
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/services/savings" className="transition hover:text-white">
-                                            Savings
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/faqs" className="transition hover:text-white">
-                                            FAQs
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/downloads" className="transition hover:text-white">
-                                            Downloadable Forms
-                                        </Link>
-                                    </li>
+                                <ul className="space-y-2 text-sm text-brand-light/70">
+                                    {footer.quickLinks.map((link) => (
+                                        <li key={link.href}>
+                                            <Link href={link.href} className="transition hover:text-white">
+                                                {link.label}
+                                            </Link>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
 
                             {/* Services */}
                             <div>
-                                <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[#4A7AAC]">
+                                <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-blue">
                                     Our Services
                                 </h4>
-                                <ul className="space-y-2 text-sm text-[#F0F4F8]/70">
-                                    <li>
-                                        <Link href="/services/loans" className="transition hover:text-white">
-                                            Credit & Lending
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/services/savings" className="transition hover:text-white">
-                                            Savings & Deposits
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/services/safari" className="transition hover:text-white">
-                                            Hospitality
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/services/aqua-bope" className="transition hover:text-white">
-                                            Water Station
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/services/commercial-building" className="transition hover:text-white">
-                                            Commercial Building
-                                        </Link>
-                                    </li>
+                                <ul className="space-y-2 text-sm text-brand-light/70">
+                                    {footer.serviceLinks.map((link) => (
+                                        <li key={link.href}>
+                                            <Link href={link.href} className="transition hover:text-white">
+                                                {link.label}
+                                            </Link>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
 
                             {/* Contact */}
                             <div>
-                                <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[#4A7AAC]">
+                                <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand-blue">
                                     Contact Us
                                 </h4>
-                                <ul className="space-y-3 text-sm text-[#F0F4F8]/70">
+                                <ul className="space-y-3 text-sm text-brand-light/70">
                                     <li className="flex items-start gap-2">
-                                        <MapPin size={16} className="mt-0.5 shrink-0 text-[#2E6B6B]" />
-                                        <span>
-                                            Your Address Here
-                                        </span>
+                                        <MapPin size={16} className="mt-0.5 shrink-0 text-brand-teal" />
+                                        <span>{contact.address}</span>
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <Phone size={16} className="shrink-0 text-[#2E6B6B]" />
-                                        (000) 000-0000
+                                        <Phone size={16} className="shrink-0 text-brand-teal" />
+                                        {contact.phone}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <Mail size={16} className="shrink-0 text-[#2E6B6B]" />
-                                        info@cooperative.com
+                                        <Mail size={16} className="shrink-0 text-brand-teal" />
+                                        {contact.email}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <Clock size={16} className="shrink-0 text-[#2E6B6B]" />
-                                        Mon-Fri, 8:00 AM - 5:00 PM
+                                        <Clock size={16} className="shrink-0 text-brand-teal" />
+                                        {contact.hours}
                                     </li>
                                 </ul>
-                                <div className="mt-4 flex items-center gap-3">
-                                    <a
-                                        href="#"
-                                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-[#4A7AAC]"
-                                    >
-                                        <Facebook size={16} />
-                                    </a>
-                                </div>
+                                {contact.facebookUrl && (
+                                    <div className="mt-4">
+                                        {/* Previous Facebook logo button (kept for reuse)
+                                        <a
+                                            href={contact.facebookUrl}
+                                            className="flex h-8 w-8 items-center justify-center rounded-full bg-card/10 transition hover:bg-brand-blue"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <Facebook size={16} />
+                                        </a>
+                                        */}
+                                        <a
+                                            href={contact.facebookUrl}
+                                            className="text-sm font-medium text-brand-blue underline-offset-2 transition hover:text-white hover:underline"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Visit our Facebook page
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                     <div className="border-t border-white/10">
                         <div className="mx-auto max-w-7xl px-4 py-4">
-                            <p className="text-center text-xs text-[#F0F4F8]/50">
-                                &copy; {new Date().getFullYear()} Multi-Purpose Cooperative. All rights reserved.
+                            <p className="text-center text-xs text-brand-light/50">
+                                &copy; {new Date().getFullYear()} {appName}. All rights reserved.
                             </p>
                         </div>
                     </div>
@@ -380,3 +352,4 @@ export default function FrontLayout({ title, children }: FrontLayoutProps) {
         </>
     );
 }
+

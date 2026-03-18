@@ -61,7 +61,9 @@ export default function Edit({ gallery, categories }: Props) {
             <Head title="Edit Gallery Item" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Edit Gallery Item</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -78,7 +80,7 @@ export default function Edit({ gallery, categories }: Props) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.gallery_category_id && <p className="mt-1 text-sm text-red-600">{errors.gallery_category_id}</p>}
+                                {errors.gallery_category_id && <p className="mt-1 text-sm text-destructive">{errors.gallery_category_id}</p>}
                             </div>
 
                             <div>
@@ -92,7 +94,7 @@ export default function Edit({ gallery, categories }: Props) {
                                     onChange={(e) => setData('title', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                                {errors.title && <p className="mt-1 text-sm text-destructive">{errors.title}</p>}
                             </div>
 
                             <div>
@@ -106,7 +108,7 @@ export default function Edit({ gallery, categories }: Props) {
                                     onChange={(e) => setData('description', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                                {errors.description && <p className="mt-1 text-sm text-destructive">{errors.description}</p>}
                             </div>
                             <div>
                                 <Label htmlFor="year">Year</Label>
@@ -119,7 +121,7 @@ export default function Edit({ gallery, categories }: Props) {
                                     onChange={(e) => setData('year', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.year && <p className="mt-1 text-sm text-red-600">{errors.year}</p>}
+                                {errors.year && <p className="mt-1 text-sm text-destructive">{errors.year}</p>}
                             </div>
 
                             <div>
@@ -143,11 +145,11 @@ export default function Edit({ gallery, categories }: Props) {
                                     id="image"
                                     name="image"
                                     type="file"
-                                    accept="image/*"
+                                    accept=".jpg,.jpeg,.png,.gif"
                                     onChange={(e) => setData('image', e.target.files?.[0] || null)}
-                                    className="mt-1"
+                                    className="mt-1 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-brand-navy-dark"
                                 />
-                                {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                                {errors.image && <p className="mt-1 text-sm text-destructive">{errors.image}</p>}
                             </div>
 
                             <div className="flex justify-end gap-2">
@@ -159,6 +161,7 @@ export default function Edit({ gallery, categories }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

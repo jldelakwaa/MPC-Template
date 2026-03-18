@@ -163,4 +163,13 @@ class NewsController extends Controller
 
         return redirect()->back()->with('success', 'Selected news items have been deleted.');
     }
+
+    public function publicShow(NewsUpdate $news)
+    {
+        $news->load('newsDetails');
+
+        return Inertia::render('Frontpage/News/Show', [
+            'news' => $news,
+        ]);
+    }
 }

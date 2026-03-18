@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     Users,
     HelpCircle,
@@ -50,6 +50,7 @@ export default function Dashboard({ stats, }: Props) {
             icon: Users,
             color: 'text-blue-600',
             bgColor: 'bg-blue-50 dark:bg-blue-950',
+            href: '/Officers',
         },
         {
             title: 'FAQs',
@@ -57,6 +58,7 @@ export default function Dashboard({ stats, }: Props) {
             icon: HelpCircle,
             color: 'text-green-600',
             bgColor: 'bg-green-50 dark:bg-green-950',
+            href: '/Faq',
         },
         {
             title: 'Downloadables',
@@ -64,6 +66,7 @@ export default function Dashboard({ stats, }: Props) {
             icon: Download,
             color: 'text-purple-600',
             bgColor: 'bg-purple-50 dark:bg-purple-950',
+            href: '/Downloadables',
         },
         {
             title: 'Galleries',
@@ -71,13 +74,15 @@ export default function Dashboard({ stats, }: Props) {
             icon: Image,
             color: 'text-orange-600',
             bgColor: 'bg-orange-50 dark:bg-orange-950',
+            href: '/Gallery',
         },
         {
             title: 'News',
             count: stats.news,
             icon: Newspaper,
-            color: 'text-red-600',
+            color: 'text-destructive',
             bgColor: 'bg-red-50 dark:bg-red-950',
+            href: '/News',
         },
         {
             title: 'HomePage Images',
@@ -85,6 +90,7 @@ export default function Dashboard({ stats, }: Props) {
             icon: Home,
             color: 'text-cyan-600',
             bgColor: 'bg-cyan-50 dark:bg-cyan-950',
+            href: '/HomePage',
         },
     ];
 
@@ -109,19 +115,21 @@ export default function Dashboard({ stats, }: Props) {
                     {cards.map((card) => {
                         const Icon = card.icon;
                         return (
-                            <Card key={card.title} className={`hover:shadow-lg transition-all duration-200 border-0 ${card.bgColor}`}>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        {card.title}
-                                    </CardTitle>
-                                    <div className={`p-2 rounded-lg ${card.bgColor} ${card.color}`}>
-                                        <Icon className="h-4 w-4" />
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-3xl font-bold">{card.count}</div>
-                                </CardContent>
-                            </Card>
+                            <Link key={card.title} href={card.href} className="block" aria-label={`Manage ${card.title}`}>
+                                <Card className={`cursor-pointer border-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${card.bgColor}`}>
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">
+                                            {card.title}
+                                        </CardTitle>
+                                        <div className={`rounded-lg p-2 ${card.bgColor} ${card.color}`}>
+                                            <Icon className="h-4 w-4" />
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-3xl font-bold">{card.count}</div>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         );
                     })}
                 </div>

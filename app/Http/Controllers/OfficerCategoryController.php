@@ -100,4 +100,20 @@ class OfficerCategoryController extends Controller
         return redirect()->route('Admin.OfficerCategories.index')
             ->with('success', 'Officer Category deleted successfully.');
     }
+
+    /**
+     * Bulk delete officer categories.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:officer_categories,id',
+        ]);
+
+        OfficerCategory::whereIn('id', $request->input('ids'))->delete();
+
+        return redirect()->route('Admin.OfficerCategories.index')
+            ->with('success', 'Selected officer categories deleted successfully.');
+    }
 }

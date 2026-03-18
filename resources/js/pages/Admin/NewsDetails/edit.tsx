@@ -61,7 +61,9 @@ export default function Edit({ newsDetail, news }: Props) {
             <Head title="Edit News Detail" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Edit Detail</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -74,7 +76,7 @@ export default function Edit({ newsDetail, news }: Props) {
                                     onChange={(e) => setData('content', e.target.value)}
                                     className="mt-1 min-h-[200px]"
                                 />
-                                {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content}</p>}
+                                {errors.content && <p className="mt-1 text-sm text-destructive">{errors.content}</p>}
                             </div>
 
                             <div>
@@ -86,7 +88,7 @@ export default function Edit({ newsDetail, news }: Props) {
                                                 href={`/storage/${newsDetail.pdf_files}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center text-blue-600 hover:underline"
+                                                className="flex items-center text-primary hover:underline"
                                             >
                                                 <FileText className="mr-2 h-4 w-4" />
                                                 View Current PDF
@@ -110,9 +112,9 @@ export default function Edit({ newsDetail, news }: Props) {
                                     type="file"
                                     accept=".pdf"
                                     onChange={(e) => setData('pdf_files', e.target.files?.[0] || null)}
-                                    className="mt-1"
+                                    className="mt-1 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-brand-navy-dark"
                                 />
-                                {errors.pdf_files && <p className="mt-1 text-sm text-red-600">{errors.pdf_files}</p>}
+                                {errors.pdf_files && <p className="mt-1 text-sm text-destructive">{errors.pdf_files}</p>}
                                 <p className="mt-1 text-sm text-muted-foreground">Upload a new PDF to replace the current one. Max size: 20MB.</p>
                             </div>
 
@@ -125,6 +127,7 @@ export default function Edit({ newsDetail, news }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

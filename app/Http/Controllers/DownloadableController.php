@@ -159,4 +159,15 @@ class DownloadableController extends Controller
 
         return redirect()->back()->with('success', 'Selected downloadables have been deleted.');
     }
+
+    public function publicIndex()
+    {
+        $downloadables = Downloadable::with('category')->orderBy('title')->get();
+        $categories    = DownloadableCategory::orderBy('category_name')->get();
+
+        return Inertia::render('Frontpage/Downloadbles/Index', [
+            'downloadables' => $downloadables,
+            'categories'    => $categories,
+        ]);
+    }
 }

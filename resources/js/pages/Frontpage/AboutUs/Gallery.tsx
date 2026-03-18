@@ -1,5 +1,6 @@
 import FrontLayout from '@/pages/Frontpage/layout/FrontLayout';
-import { Link } from '@inertiajs/react';
+import Breadcrumb from '@/components/Breadcrumb';
+import FrontHero from '@/components/FrontHero';
 import { useState } from 'react';
 import { Camera, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -43,37 +44,31 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
     return (
         <FrontLayout title="Gallery">
             {/* Hero Banner */}
-            <section className="bg-gradient-to-br from-[#1B3A6B] via-[#4A7AAC]/50 to-[#2E6B6B]/50 py-16">
-                <div className="mx-auto max-w-7xl px-4 text-center">
-                    <h1 className="text-4xl font-extrabold text-[#F0F4F8]">Gallery</h1>
-                    <p className="mt-3 text-lg text-[#F0F4F8]/70">
-                        Moments captured from our cooperative's events, activities, and milestones
-                    </p>
-                    <div className="mx-auto mt-3 h-1 w-16 rounded bg-[#2E6B6B]" />
-                </div>
-            </section>
+            <FrontHero
+                eyebrow="About Us"
+                title="Gallery"
+                subtitle="Highlights from community events and milestones."
+            />
 
             {/* Breadcrumb */}
-            <div className="bg-[#D6D8DC]/30">
-                <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm text-[#2C2C2C]/60">
-                    <Link href="/" className="hover:text-[#1B3A6B]">Home</Link>
-                    <span>/</span>
-                    <Link href="#" className="hover:text-[#1B3A6B]">About Us</Link>
-                    <span>/</span>
-                    <span className="font-medium text-[#1B3A6B]">Gallery</span>
-                </div>
-            </div>
+            <Breadcrumb
+                items={[
+                    { label: 'Home', href: '/' },
+                    { label: 'About Us', href: '/about' },
+                    { label: 'Gallery' },
+                ]}
+            />
 
             {/* Category Filter */}
-            <section className="bg-white py-8">
+            <section className="bg-card py-8">
                 <div className="mx-auto max-w-7xl px-4">
                     <div className="flex flex-wrap items-center gap-2">
                         <button
                             onClick={() => setActiveCategory(null)}
                             className={`rounded-full px-5 py-2 text-sm font-medium transition ${
                                 activeCategory === null
-                                    ? 'bg-[#1B3A6B] text-white'
-                                    : 'bg-[#D6D8DC]/40 text-[#2C2C2C] hover:bg-[#D6D8DC]'
+                                    ? 'bg-brand-navy text-white'
+                                    : 'bg-brand-border/40 text-foreground hover:bg-brand-border'
                             }`}
                         >
                             All
@@ -84,8 +79,8 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
                                 onClick={() => setActiveCategory(cat.id)}
                                 className={`rounded-full px-5 py-2 text-sm font-medium transition ${
                                     activeCategory === cat.id
-                                        ? 'bg-[#1B3A6B] text-white'
-                                        : 'bg-[#D6D8DC]/40 text-[#2C2C2C] hover:bg-[#D6D8DC]'
+                                        ? 'bg-brand-navy text-white'
+                                        : 'bg-brand-border/40 text-foreground hover:bg-brand-border'
                                 }`}
                             >
                                 {cat.category_name}
@@ -96,14 +91,14 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
             </section>
 
             {/* Gallery Grid */}
-            <section className="bg-[#f7f8fa] py-12">
+            <section className="bg-brand-surface py-12">
                 <div className="mx-auto max-w-7xl px-4">
                     {filtered.length > 0 ? (
                         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                             {filtered.map((item, index) => (
                                 <div
                                     key={item.id}
-                                    className="group cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                                    className="group cursor-pointer overflow-hidden rounded-xl bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
                                     onClick={() => openLightbox(index)}
                                 >
                                     <div className="relative h-56 overflow-hidden">
@@ -112,17 +107,17 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
                                             alt={item.title}
                                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                         />
-                                        <div className="absolute inset-0 flex items-center justify-center bg-[#1B3A6B]/0 transition-all group-hover:bg-[#1B3A6B]/40">
+                                        <div className="absolute inset-0 flex items-center justify-center bg-brand-navy/0 transition-all group-hover:bg-brand-navy/40">
                                             <Camera className="text-white opacity-0 transition group-hover:opacity-100" size={32} />
                                         </div>
                                     </div>
                                     <div className="p-4">
-                                        <h3 className="font-semibold text-[#1B3A6B]">{item.title}</h3>
+                                        <h3 className="font-semibold text-foreground">{item.title}</h3>
                                         {item.category && (
-                                            <p className="mt-1 text-xs text-[#2E6B6B]">{item.category.category_name}</p>
+                                            <p className="mt-1 text-xs text-brand-teal">{item.category.category_name}</p>
                                         )}
                                         {item.description && (
-                                            <p className="mt-1 line-clamp-2 text-xs text-[#2C2C2C]/60">{item.description}</p>
+                                            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
                                         )}
                                     </div>
                                 </div>
@@ -130,8 +125,8 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
                         </div>
                     ) : (
                         <div className="py-20 text-center">
-                            <Camera className="mx-auto mb-4 text-[#D6D8DC]" size={48} />
-                            <p className="text-lg text-[#2C2C2C]/50">No photos available yet.</p>
+                            <Camera className="mx-auto mb-4 text-brand-border" size={48} />
+                            <p className="text-lg text-muted-foreground">No photos available yet.</p>
                         </div>
                     )}
                 </div>
@@ -142,19 +137,19 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
                     <button
                         onClick={closeLightbox}
-                        className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+                        className="absolute right-4 top-4 z-10 rounded-full bg-card/10 p-2 text-white hover:bg-card/20"
                     >
                         <X size={24} />
                     </button>
                     <button
                         onClick={prevImage}
-                        className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+                        className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/10 p-2 text-white hover:bg-card/20"
                     >
                         <ChevronLeft size={28} />
                     </button>
                     <button
                         onClick={nextImage}
-                        className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+                        className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/10 p-2 text-white hover:bg-card/20"
                     >
                         <ChevronRight size={28} />
                     </button>
@@ -176,3 +171,4 @@ export default function GalleryPage({ galleries = [], categories = [] }: Props) 
         </FrontLayout>
     );
 }
+

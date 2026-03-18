@@ -1,8 +1,8 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, Download, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -29,13 +29,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useEffect } from 'react';
 import type { SharedData } from '@/types';
 
 interface Downloadable {
     id: number;
     title: string;
-    file_path: string;
+    downloadable_form: string | null;
     downloadable_category_id: number;
     category?: {
         id: number;
@@ -103,26 +102,28 @@ const columns: ColumnDef<Downloadable>[] = [
         header: 'Category',
         cell: ({ row }) =>
             row.original.category ? (
-                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {row.original.category.category_name}
-                </span>
+                <Badge variant="secondary">{row.original.category.category_name}</Badge>
             ) : (
                 <span className="text-muted-foreground italic">No category</span>
             ),
     },
     {
-        accessorKey: 'file_path',
+        accessorKey: 'downloadable_form',
         header: 'File',
         cell: ({ row }) => (
-            <a
-                href={`/storage/${row.original.file_path}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-blue-600 hover:underline"
-            >
-                <Download className="h-4 w-4" />
-                Download
-            </a>
+            row.original.downloadable_form ? (
+                <a
+                    href={`/storage/${row.original.downloadable_form}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-primary hover:underline"
+                >
+                    <Download className="h-4 w-4" />
+                    Download
+                </a>
+            ) : (
+                <span className="text-muted-foreground italic">No file</span>
+            )
         ),
     },
     {
@@ -169,7 +170,7 @@ const columns: ColumnDef<Downloadable>[] = [
                                 });
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -182,11 +183,24 @@ const columns: ColumnDef<Downloadable>[] = [
 export default function DownloadablesIndex({ downloadables, filters }: Props) {
     const { flash } = usePage<SharedData>().props;
 
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get('/Downloadables', { search: value || undefined }, { preserveState: true, preserveScroll: true, only: ['downloadables', 'filters'] });
+    }, []);
+
     useEffect(() => {
         if (flash?.success) {
             window.Swal.fire('Success', flash.success, 'success');
         }
     }, [flash?.success]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) handleSearch(searchValue);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
 
     const table = useReactTable({
         data: downloadables.data,
@@ -194,39 +208,49 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const hasSelection = table.getFilteredSelectedRowModel().rows.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Downloadables" />
-            <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/DownloadableCategories">
-                        <Button variant="outline">
-                            <FolderKanban /> Manage Categories
-                        </Button>
-                    </Link>
-                    <Link href="/Downloadables/create">
-                        <Button>
-                            <Plus /> Create Downloadable
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-purple-50 p-2 text-purple-600 dark:bg-purple-950 dark:text-purple-400">
+                            <Download className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">Downloadables</h1>
+                            <p className="text-sm text-muted-foreground">Manage downloadable files</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/DownloadableCategories">
+                            <Button variant="outline">
+                                <FolderKanban className="mr-2 h-4 w-4" /> Manage Categories
+                            </Button>
+                        </Link>
+                        <Link href="/Downloadables/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Create Downloadable
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search downloadables..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get('/Downloadables', { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
-                            className="max-w-sm"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    {hasSelection && (
                         <Button
                             variant="destructive"
-                            className="ml-2"
                             onClick={() => {
                                 window.Swal.fire({
                                     title: 'Are you sure?',
@@ -256,7 +280,7 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -308,7 +332,7 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                     </Table>
                 </div>
 
-                {/* Laravel Pagination */}
+                {downloadables.last_page > 1 && (
                 <Pagination className="mt-4">
                     <PaginationContent>
                         {downloadables.links.map((link, i) => {
@@ -354,6 +378,7 @@ export default function DownloadablesIndex({ downloadables, filters }: Props) {
                         })}
                     </PaginationContent>
                 </Pagination>
+                )}
             </div>
         </AppLayout>
     );

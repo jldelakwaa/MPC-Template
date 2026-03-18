@@ -1,9 +1,8 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, FolderKanban, HelpCircle, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -42,10 +41,11 @@ interface FaqCategory {
 
 interface Faq {
     id: number;
-    category_id: number;
+    faqs_categoryid: number;
     question: string;
     answer: string;
     category?: FaqCategory | null;
+    faq_category?: FaqCategory | null;
     created_at: string;
     updated_at: string;
 }
@@ -126,9 +126,7 @@ const handleBulkDelete = (selectedIds: number[], resetSelection: () => void): vo
 // ============================================================================
 
 const CategoryBadge = ({ category }: { category?: FaqCategory | null }) => (
-    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-        {category?.title || 'Uncategorized'}
-    </span>
+    <Badge variant="secondary">{category?.title || 'Uncategorized'}</Badge>
 );
 
 const FaqActionsMenu = ({ faq }: { faq: Faq }) => (
@@ -147,7 +145,7 @@ const FaqActionsMenu = ({ faq }: { faq: Faq }) => (
                 </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => handleDeleteFaq(faq.id)} className="text-red-600 focus:text-red-600">
+            <DropdownMenuItem onClick={() => handleDeleteFaq(faq.id)} className="text-destructive focus:text-destructive">
                 <Trash2 className="mr-2 h-4 w-4" /> Delete
             </DropdownMenuItem>
         </DropdownMenuContent>
@@ -176,7 +174,7 @@ const createColumns = (): ColumnDef<Faq>[] => [
     {
         accessorKey: 'category',
         header: 'Category',
-        cell: ({ row }) => <CategoryBadge category={row.original.category} />,
+        cell: ({ row }) => <CategoryBadge category={row.original.category ?? row.original.faq_category} />,
     },
     {
         accessorKey: 'question',
@@ -256,20 +254,31 @@ export default function FaqIndex({ faqs, filters ={} }: FaqIndexProps) {
             <Head title="FAQ Management" />
 
             <div className="m-4 space-y-4">
-                {/* Header Actions */}
-                <div className="flex justify-end gap-2">
-                    <Link href="/FaqCategories">
-                        <Button variant="outline">
-                            <FolderKanban className="mr-2 h-4 w-4" />
-                            Manage Categories
-                        </Button>
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-green-50 p-2 text-green-600 dark:bg-green-950 dark:text-green-400">
+                            <HelpCircle className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">FAQ Management</h1>
+                            <p className="text-sm text-muted-foreground">Frequently asked questions</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/FaqCategories">
+                            <Button variant="outline">
+                                <FolderKanban className="mr-2 h-4 w-4" />
+                                Manage Categories
+                            </Button>
                     </Link>
-                    <Link href="/Faq/create">
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" />
-                            Create FAQ
-                        </Button>
-                    </Link>
+                        <Link href="/Faq/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Create FAQ
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Toolbar */}

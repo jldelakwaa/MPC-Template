@@ -1,5 +1,3 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -103,7 +101,7 @@ const columns: ColumnDef<FaqCategory>[] = [
                                 }
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -147,34 +145,44 @@ export default function Index({ categories = [], filters = {} }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="FAQ Categories" />
-            <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/Faq">
-                        <Button variant="outline">
-                            <FolderKanban /> Manage FAQs
-                        </Button>
-                    </Link>
-                    <Link href="/FaqCategories/create">
-                        <Button>
-                            <Plus /> Create Category
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-green-50 p-2 text-green-600 dark:bg-green-950 dark:text-green-400">
+                            <FolderKanban className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">FAQ Categories</h1>
+                            <p className="text-sm text-muted-foreground">Organize FAQs by category</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/Faq">
+                            <Button variant="outline">
+                                <FolderKanban className="mr-2 h-4 w-4" /> Manage FAQs
+                            </Button>
+                        </Link>
+                        <Link href="/FaqCategories/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Create Category
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search categories..."
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
-                            className="max-w-sm"
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
                     {table.getFilteredSelectedRowModel().rows.length > 0 && (
                         <Button
                             variant="destructive"
-                            className="ml-2"
                             onClick={() => {
                                 if (confirm('Are you sure you want to delete selected categories? This will remove the category from all FAQs.')) {
                                     const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as FaqCategory).id);
@@ -194,7 +202,7 @@ export default function Index({ categories = [], filters = {} }: Props) {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

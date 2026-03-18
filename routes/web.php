@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Downloadable;
-use App\Models\DownloadableCategory;
+use App\Http\Controllers\DownloadableController;
+use App\Models\ContactMessage;
 use App\Models\FaQC;
 use App\Models\FaQCategory;
 use App\Models\Gallery;
@@ -9,6 +9,9 @@ use App\Models\GalleryCategory;
 use App\Models\HomePageImage;
 use App\Models\NewsUpdate;
 use App\Models\OfficerCategory;
+use App\Mail\ContactFormSubmitted;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,6 +30,10 @@ Route::get('/', function () {
 })->name('home');
 
 // ── About Us ────────────────────────────────────────────────────────────
+Route::get('/about', function () {
+    return Inertia::render('Frontpage/AboutUs/About');
+})->name('about');
+
 Route::get('/about/gallery', function () {
     return Inertia::render('Frontpage/AboutUs/Gallery', [
         'galleries'  => Gallery::with('category')->latest()->get(),
@@ -43,6 +50,10 @@ Route::get('/about/membership', function () {
 })->name('about.membership');
 
 // ── Products & Services ─────────────────────────────────────────────────
+Route::get('/services', function () {
+    return Inertia::render('Frontpage/Services/Index');
+})->name('services.index');
+
 Route::get('/services/loans', function () {
     return Inertia::render('Frontpage/Services/Loans');
 })->name('services.loans');
@@ -66,8 +77,8 @@ Route::get('/services/commercial-building', function () {
 // ── FAQs ────────────────────────────────────────────────────────────────
 Route::get('/faqs', function () {
     return Inertia::render("Frontpage/Faq's/Index", [
-        'faqs'       => FaQC::with('faqCategory')->get(),
-        'categories' => FaQCategory::all(),
+        'faqs' => FaQC::with('faqCategory')->orderBy('id')->get(),
+        'categories' => FaQCategory::orderBy('title')->get(),
     ]);
 })->name('faqs');
 
@@ -77,6 +88,38 @@ Route::get('/news', function () {
         'news' => NewsUpdate::latest()->get(),
     ]);
 })->name('news.index');
+
+// ── Contact (POST) ───────────────────────────────────────────────────────
+Route::post('/contact', function (Request $request) {
+    $validated = $request->validate([
+        'name'    => 'required|string|max:255',
+        'email'   => 'required|email|max:255',
+        'subject' => 'required|string|max:255',
+        'message' => 'required|string|max:5000',
+        'website' => 'nullable|string|max:255',
+    ]);
+
+    if (! empty($validated['website'])) {
+        return redirect()->back()->with('success', 'Your message has been sent. We will get back to you shortly.');
+    }
+
+    $adminEmail = config('mail.from.address', env('MAIL_FROM_ADDRESS'));
+
+    ContactMessage::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'subject' => $validated['subject'],
+        'message' => $validated['message'],
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+    ]);
+
+    if ($adminEmail) {
+        Mail::to($adminEmail)->queue(new ContactFormSubmitted($validated));
+    }
+
+    return redirect()->back()->with('success', 'Your message has been sent. We will get back to you shortly.');
+})->middleware('throttle:6,1')->name('contact.store');
 
 Route::get('/news/{id}', function ($id) {
     $news = NewsUpdate::with('newsDetails')->findOrFail($id);
@@ -98,12 +141,7 @@ Route::get('/contact', function () {
 })->name('contact');
 
 // ── Downloadable Forms ──────────────────────────────────────────────────
-Route::get('/downloads', function () {
-    return Inertia::render('Frontpage/Downloadbles/Index', [
-        'downloadables' => Downloadable::with('category')->get(),
-        'categories'    => DownloadableCategory::all(),
-    ]);
-})->name('downloads');
+Route::get('/downloads', [DownloadableController::class, 'publicIndex'])->name('downloads');
 
 // admin routes are stored separately in routes/admin.php
 require __DIR__.'/admin.php';

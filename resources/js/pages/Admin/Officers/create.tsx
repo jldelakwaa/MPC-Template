@@ -49,7 +49,9 @@ export default function Index({ categories }: Props) {
             <Head title="Create New Officer" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Create New Officer</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -67,7 +69,7 @@ export default function Index({ categories }: Props) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.officer_category_id && <p className="mt-1 text-sm text-red-600">{errors.officer_category_id}</p>}
+                                {errors.officer_category_id && <p className="mt-1 text-sm text-destructive">{errors.officer_category_id}</p>}
                             </div>
 
                             <div>
@@ -81,7 +83,7 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('name', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                                {errors.name && <p className="mt-1 text-sm text-destructive">{errors.name}</p>}
                             </div>
 
                             <div>
@@ -95,7 +97,7 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('position', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.position && <p className="mt-1 text-sm text-red-600">{errors.position}</p>}
+                                {errors.position && <p className="mt-1 text-sm text-destructive">{errors.position}</p>}
                             </div>
 
                             <div>
@@ -109,7 +111,7 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('birthday', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.birthday && <p className="mt-1 text-sm text-red-600">{errors.birthday}</p>}
+                                {errors.birthday && <p className="mt-1 text-sm text-destructive">{errors.birthday}</p>}
                             </div>
                             <div>
                                 <Label htmlFor="yearservice">Year Service</Label>
@@ -122,7 +124,7 @@ export default function Index({ categories }: Props) {
                                     onChange={(e) => setData('yearservice', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.yearservice && <p className="mt-1 text-sm text-red-600">{errors.yearservice}</p>}
+                                {errors.yearservice && <p className="mt-1 text-sm text-destructive">{errors.yearservice}</p>}
                             </div>
 
                             <div>
@@ -131,11 +133,11 @@ export default function Index({ categories }: Props) {
                                     id="image"
                                     name="image"
                                     type="file"
-                                    accept="image/*"
+                                    accept=".jpg,.jpeg,.png,.gif,.webp"
                                     onChange={(e) => setData('image', e.target.files?.[0] || null)}
-                                    className="mt-1"
+                                    className="mt-1 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-brand-navy-dark"
                                 />
-                                {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                                {errors.image && <p className="mt-1 text-sm text-destructive">{errors.image}</p>}
                             </div>
 
                             <div className="flex justify-end gap-2">
@@ -147,6 +149,7 @@ export default function Index({ categories }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

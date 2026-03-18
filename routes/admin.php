@@ -11,6 +11,7 @@ use App\Http\Controllers\FaqsCategoryController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsDetailController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\ContactMessageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,7 +27,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('Admin/dashboard', [
             'stats' => [
@@ -45,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // Officer Categories
+    Route::delete('/OfficerCategories/bulk-delete', [OfficerCategoryController::class, 'bulkDestroy'])->name('Admin.OfficerCategories.bulkDestroy');
     Route::get('/OfficerCategories', [OfficerCategoryController::class, 'index'])->name('Admin.OfficerCategories.index');
     Route::get('/OfficerCategories/create', [OfficerCategoryController::class, 'create'])->name('Admin.OfficerCategories.create');
     Route::post('/OfficerCategories', [OfficerCategoryController::class, 'store'])->name('Admin.OfficerCategories.store');
@@ -67,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/Faq', [FaqsController::class, 'store'])->name('Admin.Faq.store');
     Route::get('/Faq/{id}/edit', [FaqsController::class, 'edit'])->name('Admin.Faq.edit');
     Route::put('/Faq/{id}', [FaqsController::class, 'update'])->name('Admin.Faq.update');
+    Route::delete('/Faq/bulk-delete', [FaqsController::class, 'bulkDestroy'])->name('Admin.Faq.bulkDestroy');
     Route::delete('/Faq/{id}', [FaqsController::class, 'destroy'])->name('Admin.Faq.destroy');
 
     // FaqsCategories
@@ -75,6 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/FaqCategories', [FaqsCategoryController::class, 'store'])->name('Admin.FaqCategories.store');
     Route::get('/FaqCategories/{id}/edit', [FaqsCategoryController::class, 'edit'])->name('Admin.FaqCategories.edit');
     Route::put('/FaqCategories/{id}', [FaqsCategoryController::class, 'update'])->name('Admin.FaqCategories.update');
+    Route::delete('/FaqCategories/bulk-delete', [FaqsCategoryController::class, 'bulkDestroy'])->name('Admin.FaqCategories.bulkDestroy');
     Route::delete('/FaqCategories/{id}', [FaqsCategoryController::class, 'destroy'])->name('Admin.FaqCategories.destroy');
 
 
@@ -84,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/Downloadables', [DownloadableController::class, 'store'])->name('Admin.Downloadables.store');
     Route::get('/Downloadables/{id}/edit', [DownloadableController::class, 'edit'])->name('Admin.Downloadables.edit');
     Route::put('/Downloadables/{id}', [DownloadableController::class, 'update'])->name('Admin.Downloadables.update');
+        Route::delete('/Downloadables/bulk-delete', [DownloadableController::class, 'bulkDestroy'])->name('Admin.Downloadables.bulkDestroy');
     Route::delete('/Downloadables/{id}', [DownloadableController::class, 'destroy'])->name('Admin.Downloadables.destroy');
 
     // DownloadableController Form Categories
@@ -142,5 +147,8 @@ Route::delete('/DownloadableCategories/bulk-delete', [DownloadableCategoryContro
     Route::put('/HomePage/{id}', [HomePageController::class, 'update'])->name('Admin.HomePage.update');
     Route::delete('/HomePage/bulk-delete', [HomePageController::class, 'bulkDestroy'])->name('Admin.HomePage.bulkDestroy');
     Route::delete('/HomePage/{id}', [HomePageController::class, 'destroy'])->name('Admin.HomePage.destroy');
+
+    // Contact Messages
+    Route::get('/ContactMessages', [ContactMessageController::class, 'index'])->name('Admin.ContactMessages.index');
 
 });

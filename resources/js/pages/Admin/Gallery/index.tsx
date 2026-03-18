@@ -1,8 +1,8 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, FolderKanban, LayoutGrid, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -96,8 +96,8 @@ const columns: ColumnDef<Gallery>[] = [
             row.original.image ? (
                 <img src={`/storage/${row.original.image}`} alt={row.original.title} className="h-12 w-12 rounded object-cover" />
             ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded bg-gray-200">
-                    <span className="text-xs text-gray-500">No Image</span>
+                <div className="flex h-12 w-12 items-center justify-center rounded bg-muted">
+                    <span className="text-xs text-muted-foreground">No Image</span>
                 </div>
             ),
     },
@@ -120,9 +120,7 @@ const columns: ColumnDef<Gallery>[] = [
         header: 'Category',
         cell: ({ row }) =>
             row.original.category ? (
-                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {row.original.category.category_name} {/* Fixed: category_name */}
-                </span>
+                <Badge variant="secondary">{row.original.category.category_name}</Badge>
             ) : (
                 <span className="text-muted-foreground italic">No category</span>
             ),
@@ -164,7 +162,7 @@ const columns: ColumnDef<Gallery>[] = [
                                 }
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -175,45 +173,68 @@ const columns: ColumnDef<Gallery>[] = [
 
 // 🧮 Main Page Component
 export default function GalleryIndex({ gallery, filters }: Props) {
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get('/Gallery', { search: value || undefined }, { preserveState: true, preserveScroll: true, only: ['gallery', 'filters'] });
+    }, []);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) handleSearch(searchValue);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
+
     const table = useReactTable({
         data: gallery.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const hasSelection = table.getFilteredSelectedRowModel().rows.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Gallery" />
-            <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/GalleryCategory">
-                        <Button variant="outline">
-                            <FolderKanban /> Manage Categories
-                        </Button>
-                    </Link>
-                    <Link href="/Gallery/create">
-                        <Button>
-                            <Plus /> Create Gallery Item
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-orange-50 p-2 text-orange-600 dark:bg-orange-950 dark:text-orange-400">
+                            <LayoutGrid className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">Gallery</h1>
+                            <p className="text-sm text-muted-foreground">Manage photo gallery</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/GalleryCategory">
+                            <Button variant="outline">
+                                <FolderKanban className="mr-2 h-4 w-4" /> Manage Categories
+                            </Button>
+                        </Link>
+                        <Link href="/Gallery/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Create Gallery Item
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search gallery..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get('/Gallery', { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
-                            className="max-w-sm"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    {hasSelection && (
                         <Button
                             variant="destructive"
-                            className="ml-2"
                             onClick={() => {
                                 if (confirm('Are you sure you want to delete selected gallery items?')) {
                                     const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id);
@@ -233,7 +254,7 @@ export default function GalleryIndex({ gallery, filters }: Props) {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -285,7 +306,7 @@ export default function GalleryIndex({ gallery, filters }: Props) {
                     </Table>
                 </div>
 
-                {/* Laravel Pagination */}
+                {gallery.last_page > 1 && (
                 <Pagination className="mt-4">
                     <PaginationContent>
                         {gallery.links.map((link, i) => {
@@ -331,6 +352,7 @@ export default function GalleryIndex({ gallery, filters }: Props) {
                         })}
                     </PaginationContent>
                 </Pagination>
+                )}
             </div>
         </AppLayout>
     );

@@ -6,6 +6,7 @@ use App\Http\Requests\DownloadableCategoryStoreRequest;
 use App\Http\Requests\DownloadableCategoryUpdateRequest;
 use App\Models\DownloadableCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class DownloadableCategoryController extends Controller
@@ -94,6 +95,13 @@ class DownloadableCategoryController extends Controller
     public function destroy(string $id)
     {
         $category = DownloadableCategory::findOrFail($id);
+
+        foreach ($category->downloadables as $downloadable) {
+            if ($downloadable->downloadable_form) {
+                Storage::disk('public')->delete($downloadable->downloadable_form);
+            }
+        }
+
         $category->delete();
 
         return redirect()->route('Admin.DownloadableCategories.index')
@@ -113,6 +121,12 @@ class DownloadableCategoryController extends Controller
         $categories = DownloadableCategory::whereIn('id', $request->input('ids'))->get();
 
         foreach ($categories as $category) {
+            foreach ($category->downloadables as $downloadable) {
+                if ($downloadable->downloadable_form) {
+                    Storage::disk('public')->delete($downloadable->downloadable_form);
+                }
+            }
+
             $category->delete();
         }
 

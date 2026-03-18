@@ -1,6 +1,8 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, ExternalLink, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, ExternalLink, Home, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -109,28 +111,21 @@ const columns: ColumnDef<HomePageImage>[] = [
         cell: ({ row }) => <div className="max-w-md truncate">{row.original.content}</div>,
     },
     {
-        accessorKey: 'button_text',
+        id: 'button',
         header: 'Button',
-        cell: ({ row }) =>
-            row.original.button_text ? (
-                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    {row.original.button_text}
-                </span>
-            ) : (
-                <span className="text-muted-foreground italic">No button</span>
-            ),
-    },
-    {
-        accessorKey: 'button_link',
-        header: 'Link',
-        cell: ({ row }) =>
-            row.original.button_link ? (
-                <a href={row.original.button_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-blue-600 hover:underline">
-                    <ExternalLink className="h-4 w-4" />
-                </a>
-            ) : (
-                <span className="text-muted-foreground">-</span>
-            ),
+        cell: ({ row }) => {
+            const { button_text, button_link } = row.original;
+            if (!button_text) return <span className="text-muted-foreground">—</span>;
+            if (button_link)
+                return (
+                    <a href={button_link} target="_blank" rel="noopener noreferrer">
+                        <Badge variant="secondary" className="gap-1 cursor-pointer">
+                            {button_text} <ExternalLink className="h-3 w-3" />
+                        </Badge>
+                    </a>
+                );
+            return <Badge variant="secondary">{button_text}</Badge>;
+        },
     },
     {
         id: 'actions',
@@ -161,7 +156,7 @@ const columns: ColumnDef<HomePageImage>[] = [
                                 }
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -171,37 +166,61 @@ const columns: ColumnDef<HomePageImage>[] = [
 ];
 
 export default function HomePageIndex({ homePageImages, filters }: Props) {
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get('/HomePage', { search: value || undefined }, { preserveState: true, preserveScroll: true, only: ['homePageImages', 'filters'] });
+    }, []);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) handleSearch(searchValue);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
+
     const table = useReactTable({
         data: homePageImages.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const hasSelection = table.getFilteredSelectedRowModel().rows.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="HomePage Images" />
-            <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/HomePage/create">
-                        <Button>
-                            <Plus /> Create Homepage Image
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-cyan-50 p-2 text-cyan-600 dark:bg-cyan-950 dark:text-cyan-400">
+                            <Home className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">Homepage Images</h1>
+                            <p className="text-sm text-muted-foreground">Manage homepage banner images</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/HomePage/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Create Homepage Image
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search homepage images..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get('/HomePage', { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
-                            className="max-w-sm"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    {hasSelection && (
                         <Button
                             variant="destructive"
                             className="ml-2"
@@ -224,7 +243,7 @@ export default function HomePageIndex({ homePageImages, filters }: Props) {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -276,6 +295,7 @@ export default function HomePageIndex({ homePageImages, filters }: Props) {
                     </Table>
                 </div>
 
+                {homePageImages.last_page > 1 && (
                 <Pagination className="mt-4">
                     <PaginationContent>
                         {homePageImages.links.map((link, i) => {
@@ -321,6 +341,7 @@ export default function HomePageIndex({ homePageImages, filters }: Props) {
                         })}
                     </PaginationContent>
                 </Pagination>
+                )}
             </div>
         </AppLayout>
     );

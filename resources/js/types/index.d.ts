@@ -2,7 +2,7 @@ import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
 export interface Auth {
-    user: User;
+    user: User | null;
 }
 
 export interface BreadcrumbItem {
@@ -38,6 +38,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    is_admin?: boolean;
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;
@@ -48,7 +49,7 @@ export interface User {
 declare global {
     interface Window {
         Swal: {
-            fire: (...args: any[]) => Promise<{ isConfirmed: boolean }>;
+            fire: (...args: unknown[]) => Promise<{ isConfirmed: boolean }>;
         };
     }
 }

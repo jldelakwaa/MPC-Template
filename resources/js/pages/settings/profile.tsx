@@ -23,6 +23,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
     const { auth } = usePage<SharedData>().props;
+    const user = auth.user;
+
+    if (!user) {
+        return null;
+    }
+
+    const isAdmin = Boolean(user.is_admin);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -47,7 +54,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                     <Input
                                         id="name"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
+                                        defaultValue={user.name}
                                         name="name"
                                         required
                                         autoComplete="name"
@@ -64,7 +71,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                         id="email"
                                         type="email"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.email}
+                                        defaultValue={user.email}
                                         name="email"
                                         required
                                         autoComplete="username"
@@ -74,7 +81,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                     <InputError className="mt-2" message={errors.email} />
                                 </div>
 
-                                {mustVerifyEmail && auth.user.email_verified_at === null && (
+                                {mustVerifyEmail && user.email_verified_at === null && (
                                     <div>
                                         <p className="-mt-4 text-sm text-muted-foreground">
                                             Your email address is unverified.{' '}
@@ -113,7 +120,16 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     </Form>
                 </div>
 
-                <DeleteUser />
+                {isAdmin ? (
+                    <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-800 dark:border-amber-300/20 dark:bg-amber-500/10 dark:text-amber-200">
+                        <HeadingSmall title="Delete account" description="Disabled for admin account" />
+                        <p className="text-sm">
+                            This account is an admin account. Deleting the admin account is disabled to prevent lockout.
+                        </p>
+                    </div>
+                ) : (
+                    <DeleteUser />
+                )}
             </SettingsLayout>
         </AppLayout>
     );

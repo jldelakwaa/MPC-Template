@@ -1,8 +1,8 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -105,11 +105,7 @@ const columns: ColumnDef<DownloadableCategory>[] = [
     {
         accessorKey: 'downloadables_count',
         header: 'Downloadables Count',
-        cell: ({ row }) => (
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                {row.original.downloadables_count}
-            </span>
-        ),
+        cell: ({ row }) => <Badge variant="secondary">{row.original.downloadables_count}</Badge>,
     },
     {
         accessorKey: 'created_at',
@@ -145,7 +141,7 @@ const columns: ColumnDef<DownloadableCategory>[] = [
                                 }
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -156,45 +152,68 @@ const columns: ColumnDef<DownloadableCategory>[] = [
 
 // 🧮 Main Page Component
 export default function DownloadableCategoriesIndex({ downloadables, filters }: Props) {
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get('/DownloadableCategories', { search: value || undefined }, { preserveState: true, preserveScroll: true, only: ['downloadables', 'filters'] });
+    }, []);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) handleSearch(searchValue);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
+
     const table = useReactTable({
         data: downloadables.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const hasSelection = table.getFilteredSelectedRowModel().rows.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Downloadable Categories" />
-            <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/Downloadables">
-                        <Button variant="outline">
-                            <FolderKanban /> Manage Downloadables
-                        </Button>
-                    </Link>
-                    <Link href="/DownloadableCategories/create">
-                        <Button>
-                            <Plus /> Create Category
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-purple-50 p-2 text-purple-600 dark:bg-purple-950 dark:text-purple-400">
+                            <FolderKanban className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">Downloadable Categories</h1>
+                            <p className="text-sm text-muted-foreground">Organize downloads by category</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/Downloadables">
+                            <Button variant="outline">
+                                <FolderKanban className="mr-2 h-4 w-4" /> Manage Downloadables
+                            </Button>
+                        </Link>
+                        <Link href="/DownloadableCategories/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Create Category
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search categories..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get('/DownloadableCategories', { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
-                            className="max-w-sm"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    {hasSelection && (
                         <Button
                             variant="destructive"
-                            className="ml-2"
                             onClick={() => {
                                 if (confirm('Are you sure you want to delete selected categories?')) {
                                     const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as DownloadableCategory).id);
@@ -214,7 +233,7 @@ export default function DownloadableCategoriesIndex({ downloadables, filters }: 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -266,7 +285,7 @@ export default function DownloadableCategoriesIndex({ downloadables, filters }: 
                     </Table>
                 </div>
 
-                {/* Laravel Pagination */}
+                {downloadables.last_page > 1 && (
                 <Pagination className="mt-4">
                     <PaginationContent>
                         {downloadables.links.map((link, i) => {
@@ -312,6 +331,7 @@ export default function DownloadableCategoriesIndex({ downloadables, filters }: 
                         })}
                     </PaginationContent>
                 </Pagination>
+                )}
             </div>
         </AppLayout>
     );

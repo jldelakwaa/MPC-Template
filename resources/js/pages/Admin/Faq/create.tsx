@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
@@ -44,7 +45,9 @@ export default function CreateFaq({ categories }: Props) {
             <Head title="Create New Faq" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Create New Faq</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -61,7 +64,7 @@ export default function CreateFaq({ categories }: Props) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                {errors.faqs_categoryid && <p className="mt-1 text-sm text-red-600">{errors.faqs_categoryid}</p>}
+                                {errors.faqs_categoryid && <p className="mt-1 text-sm text-destructive">{errors.faqs_categoryid}</p>}
                             </div>
 
                             <div>
@@ -75,21 +78,20 @@ export default function CreateFaq({ categories }: Props) {
                                     onChange={(e) => setData('question', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.question && <p className="mt-1 text-sm text-red-600">{errors.question}</p>}
+                                {errors.question && <p className="mt-1 text-sm text-destructive">{errors.question}</p>}
                             </div>
 
                             <div>
                                 <Label htmlFor="answer">Answer</Label>
-                                <textarea
+                                <Textarea
                                     id="answer"
                                     placeholder="Enter the answer"
                                     name="answer"
                                     value={data.answer}
                                     onChange={(e) => setData('answer', e.target.value)}
-                                    className="mt-1 flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                                    rows={6}
+                                    className="mt-1 min-h-[150px]"
                                 />
-                                {errors.answer && <p className="mt-1 text-sm text-red-600">{errors.answer}</p>}
+                                {errors.answer && <p className="mt-1 text-sm text-destructive">{errors.answer}</p>}
                             </div>
 
                             <div className="flex justify-end gap-2">
@@ -101,6 +103,7 @@ export default function CreateFaq({ categories }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

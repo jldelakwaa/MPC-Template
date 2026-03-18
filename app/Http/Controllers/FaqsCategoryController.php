@@ -103,4 +103,20 @@ class FaqsCategoryController extends Controller
                 'timer' => 3000,
             ]);
     }
+
+    /**
+     * Bulk delete FAQ categories.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:faqs_category,id',
+        ]);
+
+        FaQCategory::whereIn('id', $request->input('ids'))->delete();
+
+        return redirect()->route('Admin.FaqCategories.index')
+            ->with('success', 'Selected FAQ categories deleted successfully.');
+    }
 }

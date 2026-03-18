@@ -1,8 +1,8 @@
-'use client';
-
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -109,11 +109,7 @@ const columns: ColumnDef<OfficerCategory>[] = [
                 <ArrowUpDown />
             </Button>
         ),
-        cell: ({ row }) => (
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                {row.original.officers_count}
-            </span>
-        ),
+        cell: ({ row }) => <Badge variant="secondary">{row.original.officers_count}</Badge>,
     },
     {
         id: 'actions',
@@ -144,7 +140,7 @@ const columns: ColumnDef<OfficerCategory>[] = [
                                 }
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -155,45 +151,68 @@ const columns: ColumnDef<OfficerCategory>[] = [
 
 // 🧮 Main Page Component
 export default function OfficerCategoryIndex({ categories, filters }: Props) {
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get('/OfficerCategories', { search: value || undefined }, { preserveState: true, preserveScroll: true, only: ['categories', 'filters'] });
+    }, []);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) handleSearch(searchValue);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
+
     const table = useReactTable({
         data: categories.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const hasSelection = table.getFilteredSelectedRowModel().rows.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Officer Categories" />
-            <div className="m-4">
-                <div className="mb-4 flex justify-end gap-2">
-                    <Link href="/Officers">
-                        <Button variant="outline">
-                            <FolderKanban /> Manage Officers
-                        </Button>
-                    </Link>
-                    <Link href="/OfficerCategories/create">
-                        <Button>
-                            <Plus /> Create Category
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-blue-50 p-2 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+                            <FolderKanban className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">Officer Categories</h1>
+                            <p className="text-sm text-muted-foreground">Organize officers by category</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href="/Officers">
+                            <Button variant="outline">
+                                <FolderKanban className="mr-2 h-4 w-4" /> Manage Officers
+                            </Button>
+                        </Link>
+                        <Link href="/OfficerCategories/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Create Category
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search categories..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get('/OfficerCategories', { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
-                            className="max-w-sm"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    {hasSelection && (
                         <Button
                             variant="destructive"
-                            className="ml-2"
                             onClick={() => {
                                 if (confirm('Are you sure you want to delete selected categories? This will remove categories from all officers.')) {
                                     const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => (row.original as OfficerCategory).id);
@@ -213,7 +232,7 @@ export default function OfficerCategoryIndex({ categories, filters }: Props) {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -257,7 +276,7 @@ export default function OfficerCategoryIndex({ categories, filters }: Props) {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No categories found.
+                                        No officer categories found.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -265,7 +284,7 @@ export default function OfficerCategoryIndex({ categories, filters }: Props) {
                     </Table>
                 </div>
 
-                {/* Laravel Pagination */}
+                {categories.last_page > 1 && (
                 <Pagination className="mt-4">
                     <PaginationContent>
                         {categories.links.map((link, i) => {
@@ -311,6 +330,7 @@ export default function OfficerCategoryIndex({ categories, filters }: Props) {
                         })}
                     </PaginationContent>
                 </Pagination>
+                )}
             </div>
         </AppLayout>
     );

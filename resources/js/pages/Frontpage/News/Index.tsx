@@ -1,5 +1,7 @@
 import FrontLayout from '@/pages/Frontpage/layout/FrontLayout';
 import { Link } from '@inertiajs/react';
+import Breadcrumb from '@/components/Breadcrumb';
+import FrontHero from '@/components/FrontHero';
 import { Calendar, ArrowRight, Newspaper } from 'lucide-react';
 
 interface NewsUpdate {
@@ -19,27 +21,22 @@ export default function NewsIndex({ news = [] }: Props) {
     return (
         <FrontLayout title="News & Updates">
             {/* Hero Banner */}
-            <section className="bg-gradient-to-br from-[#1B3A6B] via-[#4A7AAC]/50 to-[#2E6B6B]/50 py-16">
-                <div className="mx-auto max-w-7xl px-4 text-center">
-                    <h1 className="text-4xl font-extrabold text-[#F0F4F8]">News & Updates</h1>
-                    <p className="mt-3 text-lg text-[#F0F4F8]/70">
-                        Stay informed with the latest from our cooperative
-                    </p>
-                    <div className="mx-auto mt-3 h-1 w-16 rounded bg-[#2E6B6B]" />
-                </div>
-            </section>
+            <FrontHero
+                eyebrow="Updates"
+                title="News & Updates"
+                subtitle="Verified updates from BOPEMPC."
+            />
 
             {/* Breadcrumb */}
-            <div className="bg-[#D6D8DC]/30">
-                <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 text-sm text-[#2C2C2C]/60">
-                    <Link href="/" className="hover:text-[#1B3A6B]">Home</Link>
-                    <span>/</span>
-                    <span className="font-medium text-[#1B3A6B]">News & Updates</span>
-                </div>
-            </div>
+            <Breadcrumb
+                items={[
+                    { label: 'Home', href: '/' },
+                    { label: 'News & Updates' },
+                ]}
+            />
 
             {/* News Grid */}
-            <section className="bg-[#f7f8fa] py-12">
+            <section className="bg-brand-surface py-12">
                 <div className="mx-auto max-w-7xl px-4">
                     {news.length > 0 ? (
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,7 +44,7 @@ export default function NewsIndex({ news = [] }: Props) {
                                 <Link
                                     key={item.id}
                                     href={`/news/${item.id}`}
-                                    className="group overflow-hidden rounded-xl bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                                    className="group overflow-hidden rounded-xl bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
                                 >
                                     {item.image ? (
                                         <div className="h-52 overflow-hidden">
@@ -58,12 +55,12 @@ export default function NewsIndex({ news = [] }: Props) {
                                             />
                                         </div>
                                     ) : (
-                                        <div className="flex h-52 items-center justify-center bg-gradient-to-br from-[#1B3A6B] to-[#4A7AAC]">
+                                        <div className="flex h-52 items-center justify-center bg-gradient-to-br from-brand-navy to-brand-blue">
                                             <Newspaper size={48} className="text-white/20" />
                                         </div>
                                     )}
                                     <div className="p-5">
-                                        <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[#2E6B6B]">
+                                        <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-brand-teal">
                                             <Calendar size={14} />
                                             {new Date(item.created_at).toLocaleDateString('en-US', {
                                                 year: 'numeric',
@@ -71,13 +68,13 @@ export default function NewsIndex({ news = [] }: Props) {
                                                 day: 'numeric',
                                             })}
                                         </div>
-                                        <h3 className="mb-2 text-lg font-bold text-[#1B3A6B] group-hover:text-[#4A7AAC]">
+                                        <h3 className="mb-2 text-lg font-bold text-foreground group-hover:text-brand-blue">
                                             {item.title}
                                         </h3>
-                                        <p className="line-clamp-3 text-sm leading-relaxed text-[#2C2C2C]/70">
+                                        <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
                                             {item.content}
                                         </p>
-                                        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-[#2E6B6B]">
+                                        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-brand-teal">
                                             Read More <ArrowRight size={14} />
                                         </div>
                                     </div>
@@ -86,8 +83,8 @@ export default function NewsIndex({ news = [] }: Props) {
                         </div>
                     ) : (
                         <div className="py-20 text-center">
-                            <Newspaper className="mx-auto mb-4 text-[#D6D8DC]" size={48} />
-                            <p className="text-lg text-[#2C2C2C]/50">No news available yet.</p>
+                            <Newspaper className="mx-auto mb-4 text-brand-border" size={48} />
+                            <p className="text-lg text-muted-foreground">No news available yet.</p>
                         </div>
                     )}
                 </div>
@@ -95,3 +92,4 @@ export default function NewsIndex({ news = [] }: Props) {
         </FrontLayout>
     );
 }
+

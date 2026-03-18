@@ -46,7 +46,9 @@ export default function Create() {
             <Head title="Create News" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Create News</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -60,7 +62,7 @@ export default function Create() {
                                     onChange={(e) => setData('title', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                                {errors.title && <p className="mt-1 text-sm text-destructive">{errors.title}</p>}
                             </div>
 
                             <div>
@@ -73,7 +75,7 @@ export default function Create() {
                                     onChange={(e) => setData('content', e.target.value)}
                                     className="mt-1 min-h-[200px]"
                                 />
-                                {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content}</p>}
+                                {errors.content && <p className="mt-1 text-sm text-destructive">{errors.content}</p>}
                             </div>
 
                             <div>
@@ -88,7 +90,7 @@ export default function Create() {
                                     onChange={(e) => setData('year', parseInt(e.target.value))}
                                     className="mt-1"
                                 />
-                                {errors.year && <p className="mt-1 text-sm text-red-600">{errors.year}</p>}
+                                {errors.year && <p className="mt-1 text-sm text-destructive">{errors.year}</p>}
                             </div>
 
                             <div>
@@ -97,11 +99,11 @@ export default function Create() {
                                     id="image"
                                     name="image"
                                     type="file"
-                                    accept="image/*"
+                                    accept=".jpg,.jpeg,.png,.gif"
                                     onChange={(e) => setData('image', e.target.files?.[0] || null)}
-                                    className="mt-1"
+                                    className="mt-1 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-brand-navy-dark"
                                 />
-                                {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
+                                {errors.image && <p className="mt-1 text-sm text-destructive">{errors.image}</p>}
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     Supported formats: JPEG, PNG, JPG, GIF. Max size: 10MB.
                                 </p>
@@ -116,6 +118,7 @@ export default function Create() {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

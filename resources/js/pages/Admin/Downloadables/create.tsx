@@ -68,7 +68,7 @@ export default function CreateDownloadable({ categories }: Props) {
                 window.Swal.fire('Success', 'Downloadable created successfully.', 'success');
                 // Reset form after successful submission
                 setData({
-                    downloadable_category_id: '',
+                    downloadable_category_id: 0,
                     title: '',
                     file: null,
                 });
@@ -81,7 +81,9 @@ export default function CreateDownloadable({ categories }: Props) {
             <Head title="Create New Downloadable" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Create New Downloadable</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -103,7 +105,7 @@ export default function CreateDownloadable({ categories }: Props) {
                                     </SelectContent>
                                 </Select>
                                 {errors.downloadable_category_id && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.downloadable_category_id}</p>
+                                    <p className="mt-1 text-sm text-destructive">{errors.downloadable_category_id}</p>
                                 )}
                             </div>
 
@@ -120,7 +122,7 @@ export default function CreateDownloadable({ categories }: Props) {
                                     className="mt-1"
                                     required
                                 />
-                                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                                {errors.title && <p className="mt-1 text-sm text-destructive">{errors.title}</p>}
                             </div>
 
                             {/* File Upload */}
@@ -131,7 +133,7 @@ export default function CreateDownloadable({ categories }: Props) {
                                     name="file"
                                     type="file"
                                     onChange={handleFileChange}
-                                    className="mt-1"
+                                    className="mt-1 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-brand-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-brand-navy-dark"
                                     required
                                     accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
                                 />
@@ -160,11 +162,11 @@ export default function CreateDownloadable({ categories }: Props) {
 
                                 {/* File Size Error */}
                                 {fileSizeError && (
-                                    <p className="mt-1 text-sm text-red-600">{fileSizeError}</p>
+                                    <p className="mt-1 text-sm text-destructive">{fileSizeError}</p>
                                 )}
 
                                 {/* Backend Errors */}
-                                {errors.file && <p className="mt-1 text-sm text-red-600">{errors.file}</p>}
+                                {errors.file && <p className="mt-1 text-sm text-destructive">{errors.file}</p>}
 
                                 <p className="mt-1 text-sm text-muted-foreground">
                                     Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, ZIP, RAR. Max size: 10MB.
@@ -189,6 +191,7 @@ export default function CreateDownloadable({ categories }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

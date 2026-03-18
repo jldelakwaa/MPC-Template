@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
@@ -33,7 +34,9 @@ export default function CreateDownloadableCategory() {
             <Head title="Create New Downloadable Category" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Create New Downloadable Category</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -47,21 +50,20 @@ export default function CreateDownloadableCategory() {
                                     onChange={(e) => setData('category_name', e.target.value)}
                                     className="mt-1"
                                 />
-                                {errors.category_name && <p className="mt-1 text-sm text-red-600">{errors.category_name}</p>}
+                                {errors.category_name && <p className="mt-1 text-sm text-destructive">{errors.category_name}</p>}
                             </div>
 
                             <div>
                                 <Label htmlFor="description">Description (Optional)</Label>
-                                <textarea
+                                <Textarea
                                     id="description"
                                     placeholder="Enter the description"
-                                    name="description" // Corrected name
+                                    name="description"
                                     value={data.description}
                                     onChange={(e) => setData('description', e.target.value)}
-                                    className="mt-1 flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    rows={3}
+                                    className="mt-1 min-h-[120px]"
                                 />
-                                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                                {errors.description && <p className="mt-1 text-sm text-destructive">{errors.description}</p>}
                             </div>
 
                             <div className="flex justify-end gap-2">
@@ -73,6 +75,7 @@ export default function CreateDownloadableCategory() {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

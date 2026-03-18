@@ -41,7 +41,9 @@ export default function Edit({ category }: Props) {
             <Head title="Edit Gallery Category" />
             <div className="m-4 flex justify-center">
                 <div className="w-full max-w-2xl">
-                    <div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="rounded-xl border-0 bg-card shadow-md overflow-hidden">
+                        <div className="h-1.5 bg-primary" />
+                        <div className="p-6">
                         <h2 className="mb-6 text-2xl font-bold">Edit Gallery Category</h2>
                         <form onSubmit={submit} className="space-y-4">
                             <div>
@@ -56,7 +58,7 @@ export default function Edit({ category }: Props) {
                                     className="mt-1"
                                 />
                                 {errors.category_name && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.category_name}</p>
+                                    <p className="mt-1 text-sm text-destructive">{errors.category_name}</p>
                                 )}
                             </div>
 
@@ -69,6 +71,7 @@ export default function Edit({ category }: Props) {
                                 </Button>
                             </div>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

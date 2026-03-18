@@ -1,5 +1,6 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, FileText, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -98,7 +99,7 @@ const columns: ColumnDef<NewsDetail>[] = [
                     href={`/storage/${row.original.pdf_files}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-blue-600 hover:underline"
+                    className="inline-flex items-center text-primary hover:underline"
                 >
                     <FileText className="mr-1 h-4 w-4" /> View PDF
                 </a>
@@ -135,7 +136,7 @@ const columns: ColumnDef<NewsDetail>[] = [
                                 }
                             }}
                         >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Delete
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -156,41 +157,63 @@ export default function NewsDetailsIndex({ newsDetails, news, filters }: Props) 
         },
     ];
 
+    const [searchValue, setSearchValue] = useState(filters.search || '');
+
+    const handleSearch = useCallback((value: string) => {
+        router.get(`/News/${news.id}/details`, { search: value || undefined }, { preserveState: true, preserveScroll: true, only: ['newsDetails', 'filters'] });
+    }, [news.id]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.search) handleSearch(searchValue);
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters.search, handleSearch]);
+
     const table = useReactTable({
         data: newsDetails.data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const hasSelection = table.getFilteredSelectedRowModel().rows.length > 0;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`News Details - ${news.title}`} />
-            <div className="m-4">
-                <div className="mb-4 flex justify-between">
-                    <h1 className="text-2xl font-bold">{news.title} - Details</h1>
-                    <Link href={`/News/${news.id}/details/create`}>
-                        <Button>
-                            <Plus /> Add Detail
-                        </Button>
-                    </Link>
+            <div className="m-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-lg bg-red-50 p-2 text-destructive dark:bg-red-950 dark:text-red-400">
+                            <FileText className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold">{news.title} - Details</h1>
+                            <p className="text-sm text-muted-foreground">Manage news article details</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Link href={`/News/${news.id}/details/create`}>
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" /> Add Detail
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="flex items-center py-4">
-                    <div className="relative w-full max-w-sm">
+                <div className="flex items-center gap-2">
+                    <div className="relative max-w-sm flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search details..."
-                            defaultValue={filters.search}
-                            onChange={(e) => {
-                                router.get(`/News/${news.id}/details`, { search: e.target.value }, { preserveState: true, preserveScroll: true });
-                            }}
-                            className="max-w-sm"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="pl-8"
                         />
-                        <Search className="absolute top-2.5 right-2 h-4 w-4 text-muted-foreground" />
                     </div>
-                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    {hasSelection && (
                         <Button
                             variant="destructive"
-                            className="ml-2"
                             onClick={() => {
                                 if (confirm('Are you sure you want to delete selected details?')) {
                                     const selectedIds = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id);
@@ -210,7 +233,7 @@ export default function NewsDetailsIndex({ newsDetails, news, filters }: Props) 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
-                                Columns <ChevronDown />
+                                Columns <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -262,6 +285,7 @@ export default function NewsDetailsIndex({ newsDetails, news, filters }: Props) 
                     </Table>
                 </div>
 
+                {newsDetails.last_page > 1 && (
                 <Pagination className="mt-4">
                     <PaginationContent>
                         {newsDetails.links.map((link, i) => {
@@ -307,6 +331,7 @@ export default function NewsDetailsIndex({ newsDetails, news, filters }: Props) 
                         })}
                     </PaginationContent>
                 </Pagination>
+                )}
             </div>
         </AppLayout>
     );

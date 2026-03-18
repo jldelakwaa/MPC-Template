@@ -4,6 +4,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Registration
+    |--------------------------------------------------------------------------
+    |
+    | This template is intended to run with a single admin account by default.
+    | Set ALLOW_REGISTRATION=true only if self-service user signups are needed.
+    |
+    */
+
+    'allow_registration' => filter_var(env('ALLOW_REGISTRATION', false), FILTER_VALIDATE_BOOL),
+
+    /*
+    |--------------------------------------------------------------------------
     | Authentication Defaults
     |--------------------------------------------------------------------------
     |

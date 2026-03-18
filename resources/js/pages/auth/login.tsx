@@ -1,29 +1,29 @@
 import AuthenticatedSessionController from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
 import AppLogoIcon from '@/components/app-logo-icon';
+import { appConfig } from '@/config/env';
 import InputError from '@/components/input-error';
-
+import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { home } from '@/routes';
+import { request } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';
-import { LoaderCircle, Lock, Mail } from 'lucide-react';
+import { LoaderCircle, Lock, Mail, ArrowLeft } from 'lucide-react';
 
 interface LoginProps {
     status?: string;
     canResetPassword: boolean;
 }
 
-export default function Login({ status }: LoginProps) {
-    const appName = import.meta.env.VITE_APP_NAME || 'Website';
-
+export default function Login({ status, canResetPassword }: LoginProps) {
     return (
         <div className="flex min-h-screen">
             <Head title="Log in" />
 
             {/* Left panel — decorative branding */}
-            <div className="hidden lg:flex lg:w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/70">
+            <div className="hidden lg:flex lg:w-1/2 relative flex-col items-center justify-center p-12 overflow-hidden bg-brand-navy">
                 {/* Ambient blobs */}
                 <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
                 <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
@@ -44,7 +44,7 @@ export default function Login({ status }: LoginProps) {
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 shadow-xl ring-1 ring-white/30 backdrop-blur-sm">
                             <AppLogoIcon className="size-9 fill-current text-white" />
                         </div>
-                        <span className="text-3xl font-bold tracking-tight">{appName}</span>
+                        <span className="text-3xl font-bold tracking-tight">{appConfig.name}</span>
                     </Link>
 
                     <h2 className="mb-4 text-2xl font-semibold">Welcome back</h2>
@@ -61,21 +61,21 @@ export default function Login({ status }: LoginProps) {
             </div>
 
             {/* Right panel — form */}
-            <div className="flex w-full flex-col items-center justify-center bg-background px-6 py-12 lg:w-1/2 lg:px-14">
+            <div className="flex w-full flex-col items-center justify-center bg-brand-light text-brand-navy px-6 py-12 lg:w-1/2 lg:px-14">
                 <div className="w-full max-w-md">
                     {/* Mobile logo */}
                     <div className="mb-8 flex flex-col items-center lg:hidden">
                         <Link href={home()} className="flex flex-col items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md">
-                                <AppLogoIcon className="size-7 fill-current text-primary-foreground" />
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-navy shadow-md">
+                                <AppLogoIcon className="size-7 fill-current text-white" />
                             </div>
-                            <span className="text-xl font-bold">{appName}</span>
+                            <span className="text-xl font-bold">{appConfig.name}</span>
                         </Link>
                     </div>
 
                     <div className="mb-8">
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Sign in to your account</h1>
-                        <p className="mt-2 text-sm text-muted-foreground">Enter your credentials to get access</p>
+                        <h1 className="text-2xl font-bold tracking-tight text-brand-navy">Sign in to your account</h1>
+                        <p className="mt-2 text-sm text-brand-navy/60">Enter your credentials to get access</p>
                     </div>
 
                     {status && (
@@ -97,7 +97,7 @@ export default function Login({ status }: LoginProps) {
                                         Email address
                                     </Label>
                                     <div className="relative">
-                                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-navy/40" />
                                         <Input
                                             id="email"
                                             type="email"
@@ -119,18 +119,18 @@ export default function Login({ status }: LoginProps) {
                                         <Label htmlFor="password" className="text-sm font-medium">
                                             Password
                                         </Label>
-                                        {/* {canResetPassword && (
+                                        {canResetPassword && (
                                             <TextLink
                                                 href={request()}
-                                                className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
+                                                className="text-xs font-medium text-brand-teal transition-colors hover:text-brand-teal-dark"
                                                 tabIndex={5}
                                             >
                                                 Forgot password?
                                             </TextLink>
-                                        )} */}
+                                        )}
                                     </div>
                                     <div className="relative">
-                                        <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                        <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-navy/40" />
                                         <Input
                                             id="password"
                                             type="password"
@@ -150,7 +150,7 @@ export default function Login({ status }: LoginProps) {
                                     <Checkbox id="remember" name="remember" tabIndex={3} />
                                     <Label
                                         htmlFor="remember"
-                                        className="cursor-pointer text-sm font-normal text-muted-foreground"
+                                        className="cursor-pointer text-sm font-normal text-brand-navy/60"
                                     >
                                         Keep me signed in for 30 days
                                     </Label>
@@ -159,7 +159,7 @@ export default function Login({ status }: LoginProps) {
                                 {/* Submit */}
                                 <Button
                                     type="submit"
-                                    className="h-11 w-full font-semibold shadow-sm transition-all hover:shadow-md"
+                                    className="h-11 w-full bg-brand-teal font-semibold text-white shadow-sm transition-all hover:bg-brand-teal-dark hover:shadow-md border-0"
                                     tabIndex={4}
                                     disabled={processing}
                                 >
@@ -177,17 +177,20 @@ export default function Login({ status }: LoginProps) {
                                     <Separator className="flex-1" />
                                 </div> */}
 
-                                {/* Sign up link
-                                <p className="text-center text-sm text-muted-foreground">
-                                    Don't have an account?{' '}
-                                    <TextLink
-                                        href={register()}
-                                        tabIndex={6}
-                                        className="font-medium text-foreground transition-colors hover:text-primary"
+                                <p className="text-center text-sm text-brand-navy/70">
+                                    Need access? Contact the site administrator.
+                                </p>
+
+                                <div className="text-center">
+                                    <Link
+                                        href={home()}
+                                        className="inline-flex items-center gap-1.5 text-sm text-brand-navy/60 transition-colors hover:text-brand-teal"
+                                        tabIndex={7}
                                     >
-                                        Create an account
-                                    </TextLink>
-                                </p> */}
+                                        <ArrowLeft size={14} />
+                                        Back to Home
+                                    </Link>
+                                </div>
                             </>
                         )}
                     </Form>

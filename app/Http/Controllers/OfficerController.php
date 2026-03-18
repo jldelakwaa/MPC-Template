@@ -165,4 +165,15 @@ class OfficerController extends Controller
          return redirect()->back()->with('success', 'Selected officers have been deleted.');
 
     }
+
+    public function publicIndex()
+    {
+        $categories = OfficerCategory::with(['officers' => function ($q) {
+            $q->orderBy('name');
+        }])->orderBy('name')->get();
+
+        return Inertia::render('Frontpage/Officer/Index', [
+            'categories' => $categories,
+        ]);
+    }
 }

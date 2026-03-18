@@ -1,6 +1,9 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
+import { Link } from '@inertiajs/react';
+import { House } from 'lucide-react';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     return (
@@ -8,6 +11,14 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
+            </div>
+            <div className="ml-auto">
+                <Button asChild variant="outline" size="sm">
+                    <Link href="/">
+                        <House className="mr-2 h-4 w-4" />
+                        View Site
+                    </Link>
+                </Button>
             </div>
         </header>
     );
