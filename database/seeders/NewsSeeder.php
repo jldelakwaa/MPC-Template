@@ -56,8 +56,8 @@ class NewsSeeder extends Seeder
                 ],
             ],
             [
-                'title'   => 'Aqua BOPE Expands to Two New Locations',
-                'content' => 'The cooperative\'s Aqua BOPE venture, Aqua BOPE, is expanding to two new locations within the community. This expansion aims to provide more residents with access to affordable, clean, and safe drinking water.',
+                'title'   => 'Water Refilling Service Expands to Two New Locations',
+                'content' => 'The cooperative\'s water refilling venture is expanding to two new locations within the community. This expansion aims to provide more residents with access to affordable, clean, and safe drinking water.',
                 'year'    => 2024,
                 'image'   => null,
                 'details' => [],

@@ -29,8 +29,8 @@ export const services: ServiceEntry[] = [
     },
     {
         icon: Droplets,
-        title: 'Aqua BOPE',
-        description: 'Access clean and affordable purified water through our Aqua-BOPE Aqua BOPE.',
+        title: 'Water Refilling',
+        description: 'Access clean and affordable purified water through our cooperative refilling station.',
         href: '/services/aqua-bope',
     },
     {

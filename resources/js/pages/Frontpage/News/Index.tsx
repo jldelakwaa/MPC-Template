@@ -24,7 +24,7 @@ export default function NewsIndex({ news = [] }: Props) {
             <FrontHero
                 eyebrow="Updates"
                 title="News & Updates"
-                subtitle="Verified updates from BOPEMPC."
+                subtitle="Verified updates from our cooperative."
             />
 
             {/* Breadcrumb */}

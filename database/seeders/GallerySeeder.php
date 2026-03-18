@@ -37,14 +37,14 @@ class GallerySeeder extends Seeder
             [
                 'gallery_category_id' => $activity?->id,
                 'title'       => 'Tree / Mangrove Planting',
-                'description' => 'BOPE MPC tree and mangrove planting activity in support of environmental conservation.',
+                'description' => 'Tree and mangrove planting activity in support of environmental conservation.',
                 'year'        => '2023-01-01',
                 'image'       => null,
             ],
             [
                 'gallery_category_id' => $activity?->id,
                 'title'       => 'Coastal Clean-up',
-                'description' => 'Coastal clean-up drive organized by BOPE MPC officers and members.',
+                'description' => 'Coastal clean-up drive organized by officers and members.',
                 'year'        => '2023-01-01',
                 'image'       => null,
             ],
@@ -67,14 +67,14 @@ class GallerySeeder extends Seeder
             [
                 'gallery_category_id' => $seminars?->id,
                 'title'       => 'Mental Health Seminar',
-                'description' => 'Mental health seminar for BOPE MPC officers and staff.',
+                'description' => 'Mental health seminar for officers and staff.',
                 'year'        => '2024-01-01',
                 'image'       => null,
             ],
             [
                 'gallery_category_id' => $seminars?->id,
                 'title'       => 'Basic Life Support Training',
-                'description' => 'Basic Life Support (BLS) training for BOPE MPC members.',
+                'description' => 'Basic Life Support (BLS) training for cooperative members.',
                 'year'        => '2024-01-01',
                 'image'       => null,
             ],

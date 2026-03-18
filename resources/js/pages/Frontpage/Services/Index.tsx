@@ -30,7 +30,7 @@ export default function ServicesIndex() {
                         <h2 className="text-3xl font-bold text-foreground">Our Offerings</h2>
                         <div className="mx-auto mt-2 h-1 w-16 rounded bg-brand-teal" />
                         <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                            BOPE Cooperative provides a wide range of financial and non-financial products and
+                            Our cooperative provides a wide range of financial and non-financial products and
                             services to serve the needs of our members and community.
                         </p>
                     </div>

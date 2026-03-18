@@ -226,7 +226,7 @@ export const creditEvaluationItems: CreditEvalItem[] = [
                 indent: true,
                 parts: [
                     {
-                        text: 'Regular members who intend to avail of a loan must have a good credit standing with other financing institutions. Loan applicants must have no delinquent or past-due accounts on any existing loan of BOPE-MPC. Deduction of total arrears may be applied to the amount of the loan applied for, if applicable.',
+                        text: 'Regular members who intend to avail of a loan must have a good credit standing with other financing institutions. Loan applicants must have no delinquent or past-due accounts on any existing cooperative loan. Deduction of total arrears may be applied to the amount of the loan applied for, if applicable.',
                     },
                 ],
             },
@@ -289,7 +289,7 @@ export const creditEvaluationItems: CreditEvalItem[] = [
                     { text: 'Collateral is regarded as a ' },
                     { text: 'secondary source of repayment', bold: true },
                     {
-                        text: " or a back-up to the primary source of repayment, which is typically the borrower's income or cash-flow. In the credit assessment, collateral serves as a safety-net for the lender: if the borrower's primary repayment capacity falters, BOPE-MPC has recourse to the pledged asset. The following may be accepted as collateral, taking into consideration the borrower's character, capacity (income/salary), share capital, deposit liabilities, and the prevailing conditions:",
+                        text: " or a back-up to the primary source of repayment, which is typically the borrower's income or cash-flow. In the credit assessment, collateral serves as a safety-net for the lender: if the borrower's primary repayment capacity falters, the cooperative has recourse to the pledged asset. The following may be accepted as collateral, taking into consideration the borrower's character, capacity (income/salary), share capital, deposit liabilities, and the prevailing conditions:",
                     },
                 ],
             },
@@ -320,7 +320,7 @@ export const creditEvaluationItems: CreditEvalItem[] = [
                     },
                     { text: 'jointly and severally liable', bold: true },
                     {
-                        text: ' with the borrower. BOPE-MPC can demand full payment from the co-maker if the borrower defaults.',
+                        text: ' with the borrower. The cooperative can demand full payment from the co-maker if the borrower defaults.',
                     },
                 ],
             },
@@ -340,7 +340,7 @@ export const creditEvaluationItems: CreditEvalItem[] = [
                 heading: 'Not Eligible to Become a Co-Maker',
                 list: [
                     'Appointed and elected officers of the Cooperative',
-                    'BOPE-MPC staff, except on loans of a co-worker',
+                    'Cooperative staff, except on loans of a co-worker',
                     '65 years old and above',
                     'Members with past-due account',
                 ],

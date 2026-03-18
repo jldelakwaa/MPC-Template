@@ -21,7 +21,7 @@ export const defaultNavItems: FrontNavItem[] = [
             { label: 'Loans', href: '/services/loans' },
             { label: 'Savings', href: '/services/savings' },
             { label: 'Hostel', href: '/services/safari' },
-            { label: 'Aqua BOPE', href: '/services/aqua-bope' },
+            { label: 'Water Refilling', href: '/services/aqua-bope' },
             { label: 'Commercial Building', href: '/services/commercial-building' },
         ],
     },
@@ -54,7 +54,7 @@ export const defaultFooterConfig: Required<FooterConfig> = {
         { label: 'Credit & Lending', href: '/services/loans' },
         { label: 'Savings & Deposits', href: '/services/savings' },
         { label: 'Hostel', href: '/services/safari' },
-        { label: 'Aqua BOPE', href: '/services/aqua-bope' },
+        { label: 'Water Refilling', href: '/services/aqua-bope' },
         { label: 'Commercial Building', href: '/services/commercial-building' },
     ],
 };

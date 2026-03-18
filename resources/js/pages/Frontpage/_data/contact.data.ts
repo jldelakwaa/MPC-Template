@@ -20,16 +20,16 @@ export const contactInfo: ContactInfo = {
     ],
     mobile: [
         { label: 'Admin Office', number: '0930 - 428 - 1464' },
-        { label: 'Aqua BOPE', number: '0994 - 537 - 7547' },
+        { label: 'Water Refilling Service', number: '0994 - 537 - 7547' },
         { label: 'SAFARI', number: '0970 - 774 - 9123' },
     ],
-    email: 'bopempc@gmail.com',
+    email: 'info@example.com',
     officeHours: 'Monday - Friday: 8:00 AM - 5:00 PM',
-    facebookUrl: 'https://www.facebook.com/bopempc',
+    facebookUrl: 'https://www.facebook.com/yourcoop',
     mapAddresses: [
         {
-            name: 'Bohol Provincial Employees Multi-Purpose Cooperative (BOPEMPC)',
-            address: 'F. ROCHA ST TAGBILARAN CITY (Capital, 6300 Bohol',
+            name: 'Sample Multi-Purpose Cooperative',
+            address: 'Main Street, City, Province, ZIP',
         },
     ],
 };

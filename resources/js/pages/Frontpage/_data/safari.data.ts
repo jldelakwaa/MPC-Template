@@ -7,16 +7,16 @@ export const safariData: ServiceDetailPageData = {
     },
     content: {
         imagePosition: 'right',
-        heading: 'BOPE-MPC Safari Hostel',
+        heading: 'Cooperative Safari Hostel',
         description:
             'SAFARI Hostel offers 15 rooms with panoramic windows, natural daylight and free wireless internet connection. Well-equipped with comfortable seating and individual climate control, the spaces can accommodate a maximum of 50 delegates.',
         location:
-            'At 3rd level of BOPEMPC Building, 0149-A F. Rocha St., Poblacion III, Tagbilaran City, Bohol.',
+            '3rd Level, Cooperative Building, Main Street, City.',
         facebook: {
             url: 'https://www.facebook.com/safarihostelbohol',
             display: 'facebook.com/safarihostelbohol',
         },
-        email: 'bopempcsafarihostel@gmail.com',
+        email: 'hostel@example.com',
         image: {
             src: '/images/safari-bope.webp',
             alt: 'Safari Hostel',

@@ -1,4 +1,4 @@
-// cspell:ignore inertiajs socio BOPEMPC
+// cspell:ignore inertiajs socio
 import FrontLayout from '@/pages/Frontpage/layout/FrontLayout';
 import Breadcrumb from '@/components/Breadcrumb';
 import FrontHero from '@/components/FrontHero';
@@ -11,7 +11,7 @@ export default function About() {
             {/* Hero Banner */}
             <FrontHero
                 eyebrow="About Us"
-                title="Bohol Provincial Employees Multi-Purpose Cooperative"
+                title="Sample Multi-Purpose Cooperative"
                 subtitle="Where members invest their trust."
             />
 
@@ -103,7 +103,7 @@ export default function About() {
                         </div>
                         <div className="mx-auto h-1 w-16 rounded bg-brand-teal" />
                         <p className="mt-4 text-lg font-semibold text-brand-teal">
-                            BOPEMPC: Where Members Invest Their Trust
+                            Where Members Invest Their Trust
                         </p>
                     </div>
 

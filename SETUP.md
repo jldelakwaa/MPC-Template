@@ -89,7 +89,7 @@ You can control the default credentials via `.env`:
 
 ```dotenv
 SEED_DEFAULT_ADMIN=false
-DEFAULT_ADMIN_EMAIL=root@gmail.com
+DEFAULT_ADMIN_EMAIL=admin@example.com
 DEFAULT_ADMIN_PASSWORD=
 ALLOW_REGISTRATION=false
 ```

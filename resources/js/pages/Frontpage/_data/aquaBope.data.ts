@@ -2,23 +2,23 @@ import type { ServiceDetailPageData } from '../Services/ServiceDetailPage';
 
 export const aquaBopeData: ServiceDetailPageData = {
     hero: {
-        title: 'Aqua Bope',
+        title: 'Water Refilling Service',
         subtitle: 'For your safe drinking water',
     },
     content: {
         imagePosition: 'left',
-        heading: 'AQUA BOPE',
+        heading: 'WATER REFILLING SERVICE',
         description:
-            "AQUA BOPE is BOPE-MPC's Water Refilling Station. Technologically equipped with 21 Stages of Water Purification System to serve our consumers with quality and safe drinking water.",
+            'Our cooperative water refilling station is equipped with modern purification technology to serve consumers with quality and safe drinking water.',
         location:
-            'At Ground Floor, BOPE-MPC Annex Building, 0149-A F. Rocha St., Poblacion III, Tagbilaran City, Bohol.',
+            'Ground Floor, Annex Building, Main Street, City.',
         facebook: {
-            url: 'https://www.facebook.com/aquabopempc',
-            display: 'facebook.com/aquabopempc',
+            url: 'https://www.facebook.com/yourcoopwater',
+            display: 'facebook.com/yourcoopwater',
         },
         image: {
             src: '/images/aqua-bope.png',
-            alt: 'Aqua Bope',
+            alt: 'Water Refilling Service',
         },
     },
     certifications: [

@@ -1,4 +1,4 @@
-# BOPE Website Template
+# MPC Website Template
 
 A reusable Laravel + Inertia + React template for cooperative or organization websites, with a public front page and an admin dashboard for content management.
 
@@ -52,7 +52,7 @@ By default, a seed admin is created only in `local` or `testing`. You can contro
 
 ```dotenv
 SEED_DEFAULT_ADMIN=false
-DEFAULT_ADMIN_EMAIL=root@gmail.com
+DEFAULT_ADMIN_EMAIL=admin@example.com
 DEFAULT_ADMIN_PASSWORD=
 ALLOW_REGISTRATION=false
 ```
@@ -70,4 +70,4 @@ If `DEFAULT_ADMIN_PASSWORD` is empty, a random password is generated and printed
 
 ## License
 
-Internal use or client projects as agreed.
+MIT (or your preferred license for portfolio use).
