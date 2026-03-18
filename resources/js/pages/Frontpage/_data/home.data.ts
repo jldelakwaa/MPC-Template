@@ -61,13 +61,13 @@ export const homeServices: HomeService[] = [
         icon: Hotel,
         title: 'Hostel',
         description: 'A Safe, Affordable, Friendly and Relaxing Inn for members and guests.',
-        href: '/services/safari',
+        href: '/services/hostel',
     },
     {
         icon: Droplets,
         title: 'Water Refilling',
         description: 'Quality purified drinking water refilling station for members and the public.',
-        href: '/services/aqua-bope',
+        href: '/services/water-refilling',
     },
     {
         icon: Building2,

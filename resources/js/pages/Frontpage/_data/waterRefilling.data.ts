@@ -1,6 +1,6 @@
 import type { ServiceDetailPageData } from '../Services/ServiceDetailPage';
 
-export const aquaBopeData: ServiceDetailPageData = {
+export const waterRefillingData: ServiceDetailPageData = {
     hero: {
         title: 'Water Refilling Service',
         subtitle: 'For your safe drinking water',

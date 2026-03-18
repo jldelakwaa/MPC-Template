@@ -23,15 +23,15 @@ export const services: ServiceEntry[] = [
     },
     {
         icon: Palmtree,
-        title: 'Hostel (Safari)',
+        title: 'Hostel',
         description: 'Experience our Hostel services and enjoy memorable stays at our cooperative facilities.',
-        href: '/services/safari',
+        href: '/services/hostel',
     },
     {
         icon: Droplets,
         title: 'Water Refilling',
         description: 'Access clean and affordable purified water through our cooperative refilling station.',
-        href: '/services/aqua-bope',
+        href: '/services/water-refilling',
     },
     {
         icon: Building2,

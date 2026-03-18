@@ -20,8 +20,8 @@ export const defaultNavItems: FrontNavItem[] = [
             { label: 'Products & Services', href: '/services' },
             { label: 'Loans', href: '/services/loans' },
             { label: 'Savings', href: '/services/savings' },
-            { label: 'Hostel', href: '/services/safari' },
-            { label: 'Water Refilling', href: '/services/aqua-bope' },
+            { label: 'Hostel', href: '/services/hostel' },
+            { label: 'Water Refilling', href: '/services/water-refilling' },
             { label: 'Commercial Building', href: '/services/commercial-building' },
         ],
     },
@@ -53,8 +53,8 @@ export const defaultFooterConfig: Required<FooterConfig> = {
     serviceLinks: [
         { label: 'Credit & Lending', href: '/services/loans' },
         { label: 'Savings & Deposits', href: '/services/savings' },
-        { label: 'Hostel', href: '/services/safari' },
-        { label: 'Water Refilling', href: '/services/aqua-bope' },
+        { label: 'Hostel', href: '/services/hostel' },
+        { label: 'Water Refilling', href: '/services/water-refilling' },
         { label: 'Commercial Building', href: '/services/commercial-building' },
     ],
 };

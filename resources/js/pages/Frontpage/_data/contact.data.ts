@@ -21,7 +21,7 @@ export const contactInfo: ContactInfo = {
     mobile: [
         { label: 'Admin Office', number: '0930 - 428 - 1464' },
         { label: 'Water Refilling Service', number: '0994 - 537 - 7547' },
-        { label: 'SAFARI', number: '0970 - 774 - 9123' },
+        { label: 'Hostel', number: '0970 - 774 - 9123' },
     ],
     email: 'info@example.com',
     officeHours: 'Monday - Friday: 8:00 AM - 5:00 PM',

@@ -62,13 +62,13 @@ Route::get('/services/savings', function () {
     return Inertia::render('Frontpage/Services/Savings');
 })->name('services.savings');
 
-Route::get('/services/safari', function () {
-    return Inertia::render('Frontpage/Services/Safari');
-})->name('services.safari');
+Route::get('/services/hostel', function () {
+    return Inertia::render('Frontpage/Services/Hostel');
+})->name('services.hostel');
 
-Route::get('/services/aqua-bope', function () {
-    return Inertia::render('Frontpage/Services/AquaBope');
-})->name('services.aqua-bope');
+Route::get('/services/water-refilling', function () {
+    return Inertia::render('Frontpage/Services/WaterRefilling');
+})->name('services.water-refilling');
 
 Route::get('/services/commercial-building', function () {
     return Inertia::render('Frontpage/Services/CommercialBuilding');

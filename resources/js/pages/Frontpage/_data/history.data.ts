@@ -31,9 +31,9 @@ export const milestones: Milestone[] = [
     },
     {
         year: '2017',
-        title: 'SAFARI Inn Opened',
+        title: 'Hostel Service Opened',
         description:
-            'Grand opening and launching of SAFARI, a Safe, Affordable, Friendly and Relaxing Inn of the cooperative.',
+            'Grand opening and launching of the hostel service, a safe, affordable, friendly and relaxing inn of the cooperative.',
     },
     {
         year: '2019',
