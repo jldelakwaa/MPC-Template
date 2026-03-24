@@ -4,7 +4,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { FolderDown, House, Images, Info, LayoutGrid, Mail, Newspaper, PersonStanding } from 'lucide-react';
+import { FolderDown, House, Images, Info, LayoutGrid, Mail, Newspaper, PersonStanding, Settings } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -48,6 +48,11 @@ const mainNavItems: NavItem[] = [
         title: 'Contact Messages',
         href: '/ContactMessages',
         icon: Mail,
+    },
+    {
+        title: 'Site Settings',
+        href: '/settings/site',
+        icon: Settings,
     },
 ];
 // const footerNavItems: NavItem[] = [

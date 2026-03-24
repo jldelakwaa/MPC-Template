@@ -5,11 +5,11 @@ import { cn } from '@/lib/utils';
 import { appearance } from '@/routes';
 import { edit as editPassword } from '@/routes/password';
 import { edit } from '@/routes/profile';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
 
-const sidebarNavItems: NavItem[] = [
+const defaultSidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
         href: edit(),
@@ -28,10 +28,17 @@ const sidebarNavItems: NavItem[] = [
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
+    const { auth } = usePage<SharedData>().props;
+
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
     }
+
+    const isAdmin = Boolean(auth.user?.is_admin);
+    const sidebarNavItems: NavItem[] = isAdmin
+        ? [...defaultSidebarNavItems, { title: 'Site', href: '/settings/site', icon: null }]
+        : defaultSidebarNavItems;
 
     const currentPath = window.location.pathname;
 

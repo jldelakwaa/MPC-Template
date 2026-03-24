@@ -6,6 +6,7 @@ use App\Http\Requests\DownloadableStoreRequest;
 use App\Http\Requests\DownloadableUpdateRequest;
 use App\Models\Downloadable;
 use App\Models\DownloadableCategory;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -162,8 +163,16 @@ class DownloadableController extends Controller
 
     public function publicIndex()
     {
-        $downloadables = Downloadable::with('category')->orderBy('title')->get();
-        $categories    = DownloadableCategory::orderBy('category_name')->get();
+        $downloadables = Cache::remember(
+            'frontpage_downloadables_items',
+            now()->addMinutes(10),
+            fn () => Downloadable::with('category')->orderBy('title')->get()
+        );
+        $categories = Cache::remember(
+            'frontpage_downloadables_categories',
+            now()->addMinutes(10),
+            fn () => DownloadableCategory::orderBy('category_name')->get()
+        );
 
         return Inertia::render('Frontpage/Downloadbles/Index', [
             'downloadables' => $downloadables,

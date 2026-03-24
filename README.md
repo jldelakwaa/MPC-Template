@@ -6,6 +6,7 @@ A reusable Laravel + Inertia + React template for cooperative or organization we
 
 - Public front page with services, news, FAQs, officers, and contact
 - Admin dashboard with CRUD for content sections
+- Admin-managed site setting for contact form recipient email
 - Branding via CSS variables and app config
 - Inertia + React front end with Tailwind
 - File uploads and media galleries
@@ -59,13 +60,37 @@ ALLOW_REGISTRATION=false
 
 If `DEFAULT_ADMIN_PASSWORD` is empty, a random password is generated and printed to the seeder output.
 
+`ALLOW_REGISTRATION` defaults to `false` (admin-only access). Set it to `true` only when you want to allow self-service registration for non-admin users.
+
+## Site Settings
+
+Admins can configure the contact form recipient email from the dashboard:
+
+- Go to `Settings -> Site`
+- Set `Contact recipient`
+
+If not set, the app falls back to `MAIL_FROM_ADDRESS`.
+
+## Quality Commands
+
+```bash
+# Type-check frontend
+npm run types
+
+# Lint without changing files
+npm run lint
+
+# Lint and auto-fix
+npm run lint:fix
+```
+
 ## Production Notes
 
 - Set `APP_ENV=production` and `APP_DEBUG=false`
 - Run `npm run build` and deploy `public/build`
 - Run `php artisan config:cache && php artisan route:cache`
 - Run `php artisan storage:link` on the server
-- Configure `MAIL_*` variables for password reset and contact form
+- Configure `MAIL_*` variables for password reset and contact form delivery
 - Run a queue worker for email delivery
 
 ## License

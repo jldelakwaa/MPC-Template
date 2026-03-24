@@ -1,9 +1,31 @@
 // cspell:ignore inertiajs socio
 import FrontLayout from '@/pages/Frontpage/layout/FrontLayout';
+import { Link } from '@inertiajs/react';
 import Breadcrumb from '@/components/Breadcrumb';
 import FrontHero from '@/components/FrontHero';
-import { Eye, Target, Lightbulb, Star } from 'lucide-react';
+import { Eye, Target, Lightbulb, Star, ArrowRight, Image, ScrollText, Users } from 'lucide-react';
 import { strategies, goals, coreValues } from '../_data/about.data';
+
+const aboutDropdownCards = [
+    {
+        title: 'Gallery',
+        href: '/about/gallery',
+        description: 'Browse cooperative events, milestones, and community highlights.',
+        icon: Image,
+    },
+    {
+        title: 'History',
+        href: '/about/history',
+        description: 'See how the cooperative started and evolved through the years.',
+        icon: ScrollText,
+    },
+    {
+        title: 'Membership',
+        href: '/about/membership',
+        description: 'Review membership types, requirements, and how to join.',
+        icon: Users,
+    },
+];
 
 export default function About() {
     return (
@@ -22,6 +44,40 @@ export default function About() {
                     { label: 'About Us' },
                 ]}
             />
+
+            {/* About Us Navigation Cards */}
+            <section className="bg-card py-16">
+                <div className="mx-auto max-w-7xl px-4">
+                    <div className="mb-10 text-center">
+                        <h2 className="text-3xl font-bold text-foreground">About Us</h2>
+                        <div className="mx-auto mt-2 h-1 w-16 rounded bg-brand-teal" />
+                        <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+                            Quick access to all available About Us sections from the dropdown menu.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {aboutDropdownCards.map((item) => (
+                            <Link
+                                key={item.title}
+                                href={item.href}
+                                className="group flex flex-col rounded-2xl border border-border/60 bg-card p-8 shadow-md transition-all hover:border-brand-navy/30 hover:shadow-lg"
+                            >
+                                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-navy/10 text-foreground transition-colors group-hover:bg-brand-navy group-hover:text-white">
+                                    <item.icon size={28} />
+                                </div>
+                                <h3 className="mb-3 text-xl font-bold text-foreground">{item.title}</h3>
+                                <p className="mb-5 flex-1 text-sm leading-relaxed text-muted-foreground">
+                                    {item.description}
+                                </p>
+                                <span className="flex items-center gap-1 text-sm font-semibold text-brand-teal transition-all group-hover:gap-2">
+                                    Learn more <ArrowRight size={16} />
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* Vision & Mission */}
             <section className="bg-card py-16">
