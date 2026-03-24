@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DownloadableController;
+use App\Models\AppSetting;
 use App\Models\ContactMessage;
 use App\Models\FaQC;
 use App\Models\FaQCategory;
@@ -11,6 +12,7 @@ use App\Models\NewsUpdate;
 use App\Models\OfficerCategory;
 use App\Mail\ContactFormSubmitted;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,8 +26,8 @@ use Inertia\Inertia;
 // Home
 Route::get('/', function () {
     return Inertia::render('Frontpage/Home/Index', [
-        'slides'     => HomePageImage::all(),
-        'latestNews' => NewsUpdate::latest()->take(6)->get(),
+        'slides'     => Cache::remember('frontpage_home_slides', now()->addMinutes(10), fn () => HomePageImage::all()),
+        'latestNews' => Cache::remember('frontpage_home_latest_news', now()->addMinutes(10), fn () => NewsUpdate::latest()->take(6)->get()),
     ]);
 })->name('home');
 
@@ -36,8 +38,8 @@ Route::get('/about', function () {
 
 Route::get('/about/gallery', function () {
     return Inertia::render('Frontpage/AboutUs/Gallery', [
-        'galleries'  => Gallery::with('category')->latest()->get(),
-        'categories' => GalleryCategory::all(),
+        'galleries'  => Cache::remember('frontpage_about_gallery_items', now()->addMinutes(10), fn () => Gallery::with('category')->latest()->get()),
+        'categories' => Cache::remember('frontpage_about_gallery_categories', now()->addMinutes(10), fn () => GalleryCategory::all()),
     ]);
 })->name('about.gallery');
 
@@ -77,15 +79,15 @@ Route::get('/services/commercial-building', function () {
 // ── FAQs ────────────────────────────────────────────────────────────────
 Route::get('/faqs', function () {
     return Inertia::render("Frontpage/Faq's/Index", [
-        'faqs' => FaQC::with('faqCategory')->orderBy('id')->get(),
-        'categories' => FaQCategory::orderBy('title')->get(),
+        'faqs' => Cache::remember('frontpage_faqs_items', now()->addMinutes(10), fn () => FaQC::with('faqCategory')->orderBy('id')->get()),
+        'categories' => Cache::remember('frontpage_faqs_categories', now()->addMinutes(10), fn () => FaQCategory::orderBy('title')->get()),
     ]);
 })->name('faqs');
 
 // ── News & Updates ──────────────────────────────────────────────────────
 Route::get('/news', function () {
     return Inertia::render('Frontpage/News/Index', [
-        'news' => NewsUpdate::latest()->get(),
+        'news' => Cache::remember('frontpage_news_items', now()->addMinutes(10), fn () => NewsUpdate::latest()->get()),
     ]);
 })->name('news.index');
 
@@ -103,7 +105,9 @@ Route::post('/contact', function (Request $request) {
         return redirect()->back()->with('success', 'Your message has been sent. We will get back to you shortly.');
     }
 
-    $adminEmail = config('mail.from.address', env('MAIL_FROM_ADDRESS'));
+    $adminEmail = Cache::remember('contact_recipient_email', now()->addMinutes(10), function () {
+        return AppSetting::getValue('contact_recipient_email', config('mail.from.address'));
+    });
 
     ContactMessage::create([
         'name' => $validated['name'],
@@ -131,7 +135,7 @@ Route::get('/news/{id}', function ($id) {
 // ── Officers ────────────────────────────────────────────────────────────
 Route::get('/officers', function () {
     return Inertia::render('Frontpage/Officer/Index', [
-        'categories' => OfficerCategory::with('officers')->get(),
+        'categories' => Cache::remember('frontpage_officer_categories', now()->addMinutes(10), fn () => OfficerCategory::with('officers')->get()),
     ]);
 })->name('officers');
 

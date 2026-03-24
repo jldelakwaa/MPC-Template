@@ -15,10 +15,11 @@
             (function() {
                 const appearance = '{{ $appearance ?? "system" }}';
                 const root = document.documentElement;
+                const isDark = appearance === 'dark';
 
-                root.classList.toggle('dark', appearance === 'dark');
+                root.classList.toggle('dark', isDark);
                 root.classList.toggle('system-theme', appearance === 'system');
-                root.style.colorScheme = appearance === 'dark' ? 'dark' : 'light';
+                root.style.colorScheme = isDark ? 'dark' : 'light';
             })();
         </script>
 

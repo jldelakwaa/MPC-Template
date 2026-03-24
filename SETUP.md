@@ -12,7 +12,7 @@ A step-by-step guide for getting this project running locally, configuring it fo
 | Composer | 2.x |
 | Node.js | 18.x LTS or newer |
 | npm  | 9.x or newer |
-| SQLite | (bundled with PHP) **or** MySQL / PostgreSQL |
+| MySQL | 8.x |
 
 ---
 
@@ -46,15 +46,13 @@ cp .env.example .env
 APP_NAME="Your Cooperative Name"
 APP_URL=http://localhost:8000
 
-# --- Database (SQLite by default — no extra setup needed) ---
-DB_CONNECTION=sqlite
-# For MySQL, uncomment and fill in:
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=your_db_name
-# DB_USERNAME=your_db_user
-# DB_PASSWORD=your_db_password
+# --- Database (MySQL) ---
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_db_name
+DB_USERNAME=your_db_user
+DB_PASSWORD=your_db_password
 
 # --- Branding (used by the frontend) ---
 VITE_APP_NAME="${APP_NAME}"
@@ -96,6 +94,9 @@ ALLOW_REGISTRATION=false
 
 If `DEFAULT_ADMIN_PASSWORD` is empty, a random password is generated and printed to the seeder output.
 
+`ALLOW_REGISTRATION=false` keeps the app admin-only.
+Set `ALLOW_REGISTRATION=true` only when you intentionally want to allow self-registration for non-admin accounts.
+
 ---
 
 ## 5. Create Storage Symlink
@@ -116,6 +117,15 @@ npm run dev
 
 # Production build
 npm run build
+
+# Lint (check only)
+npm run lint
+
+# Lint (auto-fix)
+npm run lint:fix
+
+# Type-check
+npm run types
 ```
 
 ---
@@ -136,6 +146,14 @@ npm run start
 
 Visit `http://localhost:8000` — the public site.  
 Admin panel: `http://localhost:8000/dashboard` (log in first via `/login`).
+
+To configure where contact form submissions are sent:
+
+- Log in as admin
+- Open `Settings -> Site`
+- Set `Contact recipient`
+
+If empty, the app falls back to `MAIL_FROM_ADDRESS`.
 
 If you want contact emails to send in the background, run a queue worker:
 
@@ -204,7 +222,7 @@ Those 10 values cascade through every page — Frontpage, Admin, and Auth.
 │   │   ├── layouts/           # Admin & Auth shell layouts
 │   │   └── pages/
 │   │       ├── Admin/         # All admin CRUD pages
-│   │       ├── auth/          # Login, register, reset-password pages
+│   │       ├── auth/          # Login, register (toggleable), reset-password pages
 │   │       └── Frontpage/     # Public-facing site
 │   │           ├── _data/     # ← SITE CONTENT & NAV DATA lives here
 │   │           └── layout/    # FrontLayout (header + footer)
@@ -224,7 +242,9 @@ Those 10 values cascade through every page — Frontpage, Admin, and Auth.
 - [ ] Run `php artisan config:cache && php artisan route:cache`
 - [ ] Run `php artisan storage:link` on the server
 - [ ] Ensure the seeded admin account uses a strong password
+- [ ] Keep `ALLOW_REGISTRATION=false` unless public signup is required
 - [ ] Set `APP_URL` to the live domain
 - [ ] Configure `MAIL_*` variables for password-reset emails
+- [ ] Set contact recipient email in `Settings -> Site`
 - [ ] Place the client logo in `public/` and set `VITE_APP_LOGO_URL`
 - [ ] Run a queue worker (or supervisor) for email delivery
