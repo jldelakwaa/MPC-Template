@@ -82,10 +82,10 @@ export default function Contact() {
                         </p>
                     </div>
 
-                    <div className="grid items-stretch gap-8 lg:grid-cols-12">
-                        {/* Contact Info */}
-                        <div className="lg:col-span-5">
-                            <div className="h-full rounded-3xl border border-brand-navy/10 bg-card p-8 text-foreground shadow-xl shadow-brand-navy/5">
+                    <div className="rounded-3xl border border-brand-navy/10 bg-card p-3 shadow-2xl shadow-brand-navy/10 md:p-4">
+                        <div className="grid items-stretch gap-4 lg:grid-cols-12">
+                            {/* Contact Info */}
+                            <div className="rounded-2xl bg-card p-5 text-foreground lg:col-span-5 md:p-8">
                                 <h3 className="text-2xl font-semibold">Contact Details</h3>
                                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                                     Prefer direct channels? Here are all our official contact points.
@@ -169,11 +169,9 @@ export default function Contact() {
                                     <Facebook size={16} /> Visit our Facebook page
                                 </a>
                             </div>
-                        </div>
 
-                        {/* Contact Form */}
-                        <div className="lg:col-span-7">
-                            <div className="h-full rounded-3xl border border-white/20 bg-brand-navy/90 p-6 text-white shadow-2xl shadow-brand-navy/25 md:p-8">
+                            {/* Contact Form */}
+                            <div className="rounded-2xl border border-white/20 bg-brand-navy/90 p-6 text-white shadow-2xl shadow-brand-navy/25 lg:col-span-7 md:p-8">
                                 <h3 className="flex items-center gap-2 text-2xl font-bold text-white">
                                     <MessageSquare size={22} /> Comments & Suggestions
                                 </h3>
