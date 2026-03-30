@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
     {
         $shouldSeedAdmin = app()->environment(['local', 'testing']) || (bool) env('SEED_DEFAULT_ADMIN', false);
 
-        if ($shouldSeedAdmin) {
+        // Seed a default admin only when none exists to avoid duplicate admins after profile email changes.
+        if ($shouldSeedAdmin && ! User::query()->where('is_admin', true)->exists()) {
             $adminEmail = env('DEFAULT_ADMIN_EMAIL', 'root@gmail.com');
             $adminPassword = env('DEFAULT_ADMIN_PASSWORD');
             $generatedPassword = $adminPassword ?: Str::password(16);

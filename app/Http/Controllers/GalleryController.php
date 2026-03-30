@@ -7,6 +7,7 @@ use App\Http\Requests\GalleryUpdateRequest;
 use App\Models\Gallery;
 use App\Models\GalleryCategory;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -59,6 +60,7 @@ class GalleryController extends Controller
         }
 
         Gallery::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Gallery.index')
             ->with('success', 'Gallery created successfully.');
@@ -113,6 +115,7 @@ class GalleryController extends Controller
         }
 
         $gallery->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Gallery.index')
             ->with('success', 'Gallery item updated successfully.');
@@ -131,6 +134,7 @@ class GalleryController extends Controller
         }
 
         $gallery->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Gallery.index')
             ->with('success', 'Gallery item deleted successfully.');
@@ -152,6 +156,13 @@ class GalleryController extends Controller
             $gallery->delete();
         }
 
+        $this->forgetFrontpageCaches();
+
         return redirect()->back()->with('success', 'Selected gallery items have been deleted.');
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_about_gallery_items');
     }
 }

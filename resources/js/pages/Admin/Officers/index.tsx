@@ -35,7 +35,7 @@ interface Officer {
     officer_category_id: number | null;
     name: string;
     position: string;
-    birthday: string;
+    birthday: string | null;
     image: string | null;
     category?: {
         id: number;
@@ -127,7 +127,21 @@ const columns: ColumnDef<Officer>[] = [
     {
         accessorKey: 'birthday',
         header: 'Birthday',
-        cell: ({ row }) => new Date(row.original.birthday).toLocaleDateString('en-US'),
+        cell: ({ row }) => {
+            const birthday = row.original.birthday;
+
+            if (!birthday) {
+                return <span className="text-muted-foreground italic">N/A</span>;
+            }
+
+            const parsedDate = new Date(birthday);
+
+            if (Number.isNaN(parsedDate.getTime())) {
+                return <span className="text-muted-foreground italic">N/A</span>;
+            }
+
+            return parsedDate.toLocaleDateString('en-US');
+        },
     },
     {
         id: 'actions',

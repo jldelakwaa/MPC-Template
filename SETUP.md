@@ -81,7 +81,8 @@ php artisan migrate
 php artisan db:seed
 ```
 
-By default, a seed admin account is created only in `local` or `testing`.
+By default, admin seeding is enabled in `local` or `testing` (or when `SEED_DEFAULT_ADMIN=true`).
+The seeder creates the default admin only when no admin account currently exists.
 
 You can control the default credentials via `.env`:
 
@@ -93,6 +94,11 @@ ALLOW_REGISTRATION=false
 ```
 
 If `DEFAULT_ADMIN_PASSWORD` is empty, a random password is generated and printed to the seeder output.
+
+Seeding behavior notes:
+
+- Running `php artisan db:seed` after changing admin email/password in the app will not overwrite your current admin credentials.
+- Running `php artisan migrate:fresh --seed` will wipe the database and recreate the default admin from `.env` values.
 
 `ALLOW_REGISTRATION=false` keeps the app admin-only.
 Set `ALLOW_REGISTRATION=true` only when you intentionally want to allow self-registration for non-admin accounts.

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -50,6 +51,12 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        if ($user->is_admin && User::query()->where('is_admin', true)->count() <= 1) {
+            return back()->withErrors([
+                'password' => 'The last admin account cannot be deleted.',
+            ]);
+        }
 
         Auth::logout();
 

@@ -7,6 +7,7 @@ use App\Http\Requests\FaqUpdateRequest;
 use App\Models\FaQC;
 use App\Models\FaQCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class FaqsController extends Controller
@@ -49,6 +50,7 @@ class FaqsController extends Controller
         $validated = $request->validated();
 
         FaQC::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Faq.index')
             ->with('success', 'FAQ created successfully.');
@@ -85,6 +87,7 @@ class FaqsController extends Controller
         $validated = $request->validated();
 
         $faq->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Faq.index')
             ->with('success', 'FAQ updated successfully.');
@@ -97,6 +100,7 @@ class FaqsController extends Controller
     {
         $faq = FaQC::findOrFail($id);
         $faq->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Faq.index')
             ->with('swal', [
@@ -115,6 +119,7 @@ class FaqsController extends Controller
         ]);
 
         FaQC::whereIn('id', $request->input('ids'))->delete();
+        $this->forgetFrontpageCaches();
 
          return redirect()->back()->with('swal', [
             'title' => 'Deleted!',
@@ -123,5 +128,10 @@ class FaqsController extends Controller
             'timer' => 3000,
             ]);
 
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_faqs_items');
     }
 }

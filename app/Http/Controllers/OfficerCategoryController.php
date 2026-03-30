@@ -6,6 +6,7 @@ use App\Http\Requests\OfficerCategoryStoreRequest;
 use App\Http\Requests\OfficerCategoryUpdateRequest;
 use App\Models\OfficerCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class OfficerCategoryController extends Controller
@@ -47,6 +48,7 @@ class OfficerCategoryController extends Controller
         $validated = $request->validated();
 
         OfficerCategory::create($validated);
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.OfficerCategories.index')
             ->with('success', 'Officer Category created successfully.');
@@ -84,6 +86,7 @@ class OfficerCategoryController extends Controller
         $validated = $request->validated();
 
         $category->update($validated);
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.OfficerCategories.index')
             ->with('success', 'Officer Category updated successfully.');
@@ -96,6 +99,7 @@ class OfficerCategoryController extends Controller
     {
         $category = OfficerCategory::findOrFail($id);
         $category->delete();
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.OfficerCategories.index')
             ->with('success', 'Officer Category deleted successfully.');
@@ -112,8 +116,14 @@ class OfficerCategoryController extends Controller
         ]);
 
         OfficerCategory::whereIn('id', $request->input('ids'))->delete();
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.OfficerCategories.index')
             ->with('success', 'Selected officer categories deleted successfully.');
+    }
+
+    private function forgetFrontpageCache(): void
+    {
+        Cache::forget('frontpage_officer_categories');
     }
 }

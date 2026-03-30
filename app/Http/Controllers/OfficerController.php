@@ -7,6 +7,7 @@ use App\Http\Requests\OfficerUpdateRequest;
 use App\Models\Officer;
 use App\Models\OfficerCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -64,6 +65,7 @@ class OfficerController extends Controller
         }
 
         Officer::create($validated);
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.Officers.index')
             ->with('success', 'Officer created successfully.');
@@ -118,6 +120,7 @@ class OfficerController extends Controller
         }
 
         $officer->update($validated);
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.Officers.index')
             ->with('success', 'Officer updated successfully.');
@@ -136,6 +139,7 @@ class OfficerController extends Controller
         }
 
         $officer->delete();
+        $this->forgetFrontpageCache();
 
         return redirect()->route('Admin.Officers.index')
             ->with('swal', [
@@ -162,6 +166,8 @@ class OfficerController extends Controller
             $officer->delete();
         }
 
+        $this->forgetFrontpageCache();
+
          return redirect()->back()->with('success', 'Selected officers have been deleted.');
 
     }
@@ -175,5 +181,10 @@ class OfficerController extends Controller
         return Inertia::render('Frontpage/Officer/Index', [
             'categories' => $categories,
         ]);
+    }
+
+    private function forgetFrontpageCache(): void
+    {
+        Cache::forget('frontpage_officer_categories');
     }
 }
