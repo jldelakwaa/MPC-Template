@@ -6,6 +6,7 @@ use App\Http\Requests\NewsStoreRequest;
 use App\Http\Requests\NewsUpdateRequest;
 use App\Models\NewsUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -56,6 +57,7 @@ class NewsController extends Controller
         }
 
         NewsUpdate::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.News.index')
             ->with('success', 'News created successfully.');
@@ -113,6 +115,7 @@ class NewsController extends Controller
         }
 
         $news->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.News.index')
             ->with('success', 'News updated successfully.');
@@ -132,6 +135,7 @@ class NewsController extends Controller
 
         // News details will be automatically deleted due to cascade
         $news->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.News.index')
             ->with('swal', [
@@ -161,6 +165,8 @@ class NewsController extends Controller
             $news->delete();
         }
 
+        $this->forgetFrontpageCaches();
+
         return redirect()->back()->with('success', 'Selected news items have been deleted.');
     }
 
@@ -171,5 +177,11 @@ class NewsController extends Controller
         return Inertia::render('Frontpage/News/Show', [
             'news' => $news,
         ]);
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_home_latest_news');
+        Cache::forget('frontpage_news_items');
     }
 }

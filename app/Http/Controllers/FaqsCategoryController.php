@@ -6,6 +6,7 @@ use App\Http\Requests\FaqCategoryStoreRequest;
 use App\Http\Requests\FaqCategoryUpdateRequest;
 use App\Models\FaQCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class FaqsCategoryController extends Controller
@@ -46,6 +47,8 @@ class FaqsCategoryController extends Controller
     {
         $validated = $request->validated();
         FaQCategory::create($validated);
+        $this->forgetFrontpageCaches();
+
            return redirect()->route('Admin.FaqCategories.index')
             ->with('success', 'Faq Category created successfully.');
     }
@@ -81,6 +84,7 @@ class FaqsCategoryController extends Controller
         $validated = $request->validated();
 
         $category->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.FaqCategories.index')
             ->with('success', 'FaQ Category updated successfully.');
@@ -93,6 +97,7 @@ class FaqsCategoryController extends Controller
     {
         $category = FaQCategory::findOrFail($id);
         $category->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.FaqCategories.index')
             ->with('success', 'Faq Category deleted successfully.')
@@ -115,8 +120,15 @@ class FaqsCategoryController extends Controller
         ]);
 
         FaQCategory::whereIn('id', $request->input('ids'))->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.FaqCategories.index')
             ->with('success', 'Selected FAQ categories deleted successfully.');
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_faqs_items');
+        Cache::forget('frontpage_faqs_categories');
     }
 }

@@ -65,6 +65,7 @@ class DownloadableController extends Controller
         unset($validated['file']);
 
         Downloadable::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Downloadables.index')
             ->with('success', 'Downloadable created successfully.');
@@ -122,6 +123,7 @@ class DownloadableController extends Controller
         unset($validated['file']);
 
         $downloadable->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Downloadables.index')
             ->with('success', 'Downloadable updated successfully.');
@@ -137,6 +139,7 @@ class DownloadableController extends Controller
             Storage::disk('public')->delete($downloadable->downloadable_form);
         }
         $downloadable->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.Downloadables.index')
             ->with('success', 'Downloadable deleted successfully.');
@@ -158,6 +161,8 @@ class DownloadableController extends Controller
             $downloadable->delete();
         }
 
+        $this->forgetFrontpageCaches();
+
         return redirect()->back()->with('success', 'Selected downloadables have been deleted.');
     }
 
@@ -174,9 +179,15 @@ class DownloadableController extends Controller
             fn () => DownloadableCategory::orderBy('category_name')->get()
         );
 
-        return Inertia::render('Frontpage/Downloadbles/Index', [
+        return Inertia::render('Frontpage/Downloadables/Index', [
             'downloadables' => $downloadables,
             'categories'    => $categories,
         ]);
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_downloadables_items');
+        Cache::forget('frontpage_downloadables_categories');
     }
 }

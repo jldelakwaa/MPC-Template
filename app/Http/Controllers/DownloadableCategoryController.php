@@ -6,6 +6,7 @@ use App\Http\Requests\DownloadableCategoryStoreRequest;
 use App\Http\Requests\DownloadableCategoryUpdateRequest;
 use App\Models\DownloadableCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -47,6 +48,7 @@ class DownloadableCategoryController extends Controller
         $validated = $request->validated();
 
         DownloadableCategory::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.DownloadableCategories.index')
             ->with('success', 'Downloadable Category created successfully.');
@@ -84,6 +86,7 @@ class DownloadableCategoryController extends Controller
         $validated = $request->validated();
 
         $category->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.DownloadableCategories.index')
             ->with('success', 'Downloadable Category updated successfully.');
@@ -103,6 +106,7 @@ class DownloadableCategoryController extends Controller
         }
 
         $category->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.DownloadableCategories.index')
             ->with('success', 'Downloadable Category deleted successfully.');
@@ -130,6 +134,14 @@ class DownloadableCategoryController extends Controller
             $category->delete();
         }
 
+        $this->forgetFrontpageCaches();
+
         return redirect()->back()->with('success', 'Selected downloadable categories have been deleted.');
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_downloadables_items');
+        Cache::forget('frontpage_downloadables_categories');
     }
 }

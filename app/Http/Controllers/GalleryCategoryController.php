@@ -6,6 +6,7 @@ use App\Http\Requests\GalleryCategoryStoreRequest;
 use App\Http\Requests\GalleryCategoryUpdateRequest;
 use App\Models\GalleryCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -50,6 +51,7 @@ class GalleryCategoryController extends Controller
         $validated = $request->validated();
 
         GalleryCategory::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.GalleryCategory.index')
             ->with('success', 'Gallery Category created successfully.');
@@ -87,6 +89,7 @@ class GalleryCategoryController extends Controller
         $validated = $request->validated();
 
         $category->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.GalleryCategory.index')
             ->with('success', 'Gallery Category updated successfully.');
@@ -99,6 +102,7 @@ class GalleryCategoryController extends Controller
     {
         $category = GalleryCategory::findOrFail($id);
         $category->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.GalleryCategory.index')
             ->with('success', 'Gallery Category deleted successfully.');
@@ -115,8 +119,15 @@ class GalleryCategoryController extends Controller
         ]);
 
         GalleryCategory::whereIn('id', $request->ids)->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.GalleryCategory.index')
             ->with('success', 'Selected categories deleted successfully.');
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_about_gallery_items');
+        Cache::forget('frontpage_about_gallery_categories');
     }
 }

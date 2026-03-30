@@ -6,6 +6,7 @@ use App\Http\Requests\HomePageImageStoreRequest;
 use App\Http\Requests\HomePageImageUpdateRequest;
 use App\Models\HomePageImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -56,6 +57,7 @@ class HomePageController extends Controller
         }
 
         HomePageImage::create($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.HomePage.index')
             ->with('success', 'Homepage image created successfully.');
@@ -113,6 +115,7 @@ class HomePageController extends Controller
         }
 
         $homePageImage->update($validated);
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.HomePage.index')
             ->with('success', 'Homepage image updated successfully.');
@@ -131,6 +134,7 @@ class HomePageController extends Controller
         }
 
         $homePageImage->delete();
+        $this->forgetFrontpageCaches();
 
         return redirect()->route('Admin.HomePage.index')
             ->with('swal', [
@@ -160,6 +164,13 @@ class HomePageController extends Controller
             $homePageImage->delete();
         }
 
+        $this->forgetFrontpageCaches();
+
         return redirect()->back()->with('success', 'Selected homepage images have been deleted.');
+    }
+
+    private function forgetFrontpageCaches(): void
+    {
+        Cache::forget('frontpage_home_slides');
     }
 }

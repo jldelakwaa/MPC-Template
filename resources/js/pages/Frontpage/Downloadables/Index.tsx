@@ -155,4 +155,3 @@ export default function Downloads({ downloadables = [], categories = [] }: Props
         </FrontLayout>
     );
 }
-

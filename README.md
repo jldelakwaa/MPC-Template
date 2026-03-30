@@ -49,7 +49,10 @@ Branding lives in `resources/css/app.css` under `BRAND THEME`.
 
 ## Seeding Admin Access
 
-By default, a seed admin is created only in `local` or `testing`. You can control it via `.env`:
+By default, admin seeding is enabled in `local` or `testing` (or when `SEED_DEFAULT_ADMIN=true`).
+The seeder will only create the default admin when no admin account exists.
+
+You can control the default credentials via `.env`:
 
 ```dotenv
 SEED_DEFAULT_ADMIN=false
@@ -59,6 +62,11 @@ ALLOW_REGISTRATION=false
 ```
 
 If `DEFAULT_ADMIN_PASSWORD` is empty, a random password is generated and printed to the seeder output.
+
+Seeding behavior notes:
+
+- Running `php artisan db:seed` after changing admin email/password in the app will not overwrite your current admin credentials.
+- Running `php artisan migrate:fresh --seed` resets the database and recreates the default admin from `.env` values.
 
 `ALLOW_REGISTRATION` defaults to `false` (admin-only access). Set it to `true` only when you want to allow self-service registration for non-admin users.
 

@@ -49,10 +49,10 @@ export default function OfficersPage({ categories = [] }: Props) {
                     const displayedOfficers = category.officers.slice(0, 3);
                     const officersGridClass =
                         displayedOfficers.length === 1
-                            ? 'grid max-w-sm gap-6 mx-auto'
+                            ? 'mx-auto grid max-w-sm grid-cols-1 justify-items-center gap-6'
                             : displayedOfficers.length === 2
-                              ? 'grid max-w-3xl gap-6 mx-auto sm:grid-cols-2'
-                              : 'grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3';
+                              ? 'mx-auto grid max-w-2xl grid-cols-1 justify-items-center gap-6 sm:grid-cols-2'
+                              : 'mx-auto grid max-w-6xl grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3';
 
                     return (
                         <section key={category.id} className="bg-card py-12 odd:bg-brand-surface">
@@ -68,9 +68,9 @@ export default function OfficersPage({ categories = [] }: Props) {
                                     {displayedOfficers.map((officer) => (
                                         <div
                                             key={officer.id}
-                                            className="group overflow-hidden rounded-xl bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                                            className="group w-full max-w-sm overflow-hidden rounded-xl bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
                                         >
-                                            <div className="relative h-56 overflow-hidden bg-gradient-to-br from-brand-navy to-brand-blue">
+                                            <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-brand-navy to-brand-blue">
                                                 {officer.image ? (
                                                     <img
                                                         src={`/storage/${officer.image}`}
